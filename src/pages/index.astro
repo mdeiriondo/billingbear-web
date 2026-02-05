@@ -2,147 +2,279 @@
 import Layout from '../layouts/Layout.astro';
 import { getVouchers, getCourseStatus } from '../lib/wp';
 
-// Fetch de datos en tiempo de compilación (SSG)
+// Fetch de datos
 const vouchers = await getVouchers();
 const courseStatus = await getCourseStatus();
 
-// Formateador de imagen de WordPress
-const getImageUrl = (v: any) => v._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&fit=crop&q=80';
-
-// Ayudante para limpiar el status del curso
+// Helpers
+// Fallback a imagen de Pexels (Golf genérico de alta calidad)
+const getImageUrl = (v: any) => v._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://images.pexels.com/photos/274133/pexels-photo-274133.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
 const displayStatus = courseStatus ? courseStatus.replace('_', ' ') : 'Open';
+
+// ASSETS
+const logoUrl = "https://billingbearpark.com/wp-content/uploads/2020/10/cropped-treat2-2.png";
+const heroImage = "https://billingbearpark.com/wp-content/uploads/2019/04/cropped-SteveF3-7.jpg";
+
+// Imagen de Shuffleboard/Social (Pexels - Clubhouse Interior / Pub Vibe)
+const shuffleboardImage = "https://images.pexels.com/photos/696218/pexels-photo-696218.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"; 
+
+// Imagen para Eventos (Banquete/Fiesta)
+const eventsImage = "https://images.pexels.com/photos/50675/banquet-wedding-society-deco-50675.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+
+// Imagen Heritage (Árbol antiguo/Paisaje histórico)
+const heritageImage = "https://images.pexels.com/photos/1632790/pexels-photo-1632790.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
 ---
 
-<Layout title="Billingbear Park | Golf in the Royal Landscape">
+<Layout title="Billingbear Park | Pay & Play Golf in Berkshire">
 	
 	<!-- 1. TOP BAR: COURSE STATUS -->
 	<div class="bg-brand-green text-white text-[10px] md:text-xs py-2 px-6 flex justify-between items-center tracking-widest uppercase border-b border-white/10 relative z-50">
 		<div class="flex gap-6 font-medium">
 			<span class="flex items-center gap-2">
 				<span class={`w-2 h-2 rounded-full ${courseStatus === 'open' ? 'bg-green-400 animate-pulse' : 'bg-yellow-400'}`}></span> 
-				Course Status: <span class="text-brand-gold">{displayStatus}</span>
+				Today's Status: <span class="text-brand-gold">{displayStatus}</span>
 			</span>
 		</div>
-		<div class="hidden md:block opacity-70 font-serif italic lowercase tracking-normal text-sm">
-			berkshire heritage golf
+		<div class="hidden md:block opacity-70 font-serif italic text-sm normal-case tracking-normal">
+			Making quality golf accessible to all
 		</div>
 	</div>
 
-	<!-- 2. NAVIGATION -->
-	<nav class="absolute w-full z-40 px-6 py-6 border-b border-white/10 mt-0 md:mt-2">
-		<div class="max-w-7xl mx-auto flex justify-between items-center">
-			<div class="text-white font-serif text-2xl font-semibold tracking-tight">
-				Billingbear Park
-			</div>
-			
-			<div class="hidden md:flex gap-8 text-white/90 text-sm font-medium tracking-wide">
-				<a href="#old-course" class="hover:text-brand-gold transition-colors">The Old Course</a>
-				<a href="#new-course" class="hover:text-brand-gold transition-colors">The New Course</a>
-				<a href="#heritage" class="hover:text-brand-gold transition-colors">Heritage</a>
-				<a href="#weddings" class="hover:text-brand-gold transition-colors">Weddings</a>
-			</div>
-
-			<a href="https://visitors.brsgolf.com/billingbearpark" class="bg-white text-brand-green px-5 py-2 rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-brand-gold transition-colors">
-				Book Tee Time
-			</a>
-		</div>
-	</nav>
-
 	<main>
-		<!-- 3. HERO SECTION -->
-		<header class="relative h-[90vh] w-full overflow-hidden flex items-end pb-24">
-			<img 
-				src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?q=80&w=2070&auto=format&fit=crop" 
-				class="absolute inset-0 w-full h-full object-cover"
-				alt="Billingbear Golf Course Drone View"
-			/>
-			<div class="absolute inset-0 bg-black/30"></div>
-			<div class="absolute inset-0 hero-overlay"></div>
+		<!-- 3. HERO SECTION (Header + Nav Integrados) -->
+		<header class="relative h-[90vh] w-full overflow-hidden flex items-center justify-center group">
+			
+			<!-- 2. NAVIGATION -->
+			<nav class="absolute top-0 w-full z-40 px-6 py-6 bg-gradient-to-b from-black/60 to-transparent transition-opacity duration-500">
+				<div class="max-w-7xl mx-auto flex justify-between items-center">
+					<!-- LOGO SCRIPT -->
+					<a href="/" class="block hover:opacity-80 transition-opacity">
+						<img 
+							src={logoUrl} 
+							alt="Billingbear Park Golf Course" 
+							class="h-14 md:h-20 w-auto brightness-0 invert filter drop-shadow-md" 
+						/>
+					</a>
+					
+					<div class="hidden md:flex gap-6 lg:gap-8 text-white text-sm font-medium tracking-wide shadow-black drop-shadow-md">
+						<a href="#courses" class="hover:text-brand-gold transition-colors duration-300">Our Courses</a>
+						<a href="#heritage" class="hover:text-brand-gold transition-colors duration-300">History</a>
+						<a href="#vouchers" class="hover:text-brand-gold transition-colors duration-300">Gift Vouchers</a>
+						<a href="#social" class="hover:text-brand-gold transition-colors duration-300">Shuffleboard</a>
+						<a href="#events" class="hover:text-brand-gold transition-colors duration-300">Events</a>
+					</div>
 
-			<div class="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col md:flex-row items-end justify-between gap-10">
-				<div class="max-w-2xl">
-					<span class="text-brand-gold uppercase tracking-[0.2em] text-xs font-bold mb-4 block">
-						Est. 1989 • Designed by Martin Hawtree
-					</span>
-					<h1 class="text-5xl md:text-8xl text-white font-serif font-medium leading-[1] mb-6">
-						Golf in the Royal<br>Landscape.
-					</h1>
-					<p class="text-white/80 text-lg font-light max-w-lg leading-relaxed">
-						Walk the fairways of history. A pure golfing experience built on the ancient grounds of the Tudor Dynasty.
-					</p>
-				</div>
-
-				<div class="flex flex-col gap-3 w-full md:w-auto">
-					<a href="https://visitors.brsgolf.com/billingbearpark" class="bg-brand-gold text-brand-green w-full md:w-64 py-4 px-6 text-sm font-bold uppercase tracking-widest hover:bg-white transition-colors text-center block">
+					<a href="https://visitors.brsgolf.com/billingbearpark" class="bg-white text-brand-green px-6 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-brand-gold transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transform">
 						Book Tee Time
 					</a>
-					<a href="#vouchers" class="border border-white/30 backdrop-blur-sm text-white w-full md:w-64 py-4 px-6 text-sm font-bold uppercase tracking-widest hover:bg-white hover:text-brand-green transition-colors text-center block">
-						Gift Experiences
+				</div>
+			</nav>
+
+			<!-- Hero Image con Parallax Sutil -->
+			<img 
+				src={heroImage} 
+				class="absolute inset-0 w-full h-full object-cover scale-105 transition-transform duration-[10s] ease-in-out group-hover:scale-110"
+				alt="Billingbear Golf Course Lake View"
+			/>
+			<div class="absolute inset-0 bg-brand-green/20 mix-blend-multiply"></div>
+			<div class="absolute inset-0 bg-black/30"></div>
+			
+			<div class="relative z-10 max-w-5xl mx-auto px-6 text-center mt-20">
+				<h1 class="text-5xl md:text-7xl text-white font-serif font-medium leading-[1.1] mb-6 drop-shadow-xl opacity-0 translate-y-8 animate-enter" style="animation-delay: 100ms;">
+					Welcome to <span class="text-brand-gold italic">Billingbear Park</span>
+				</h1>
+				<p class="text-white text-lg md:text-2xl font-light max-w-3xl mx-auto leading-relaxed drop-shadow-lg opacity-0 translate-y-8 animate-enter" style="animation-delay: 300ms;">
+					Pay and play golf in the heart of the beautiful Berkshire countryside.
+				</p>
+				
+				<div class="flex flex-col sm:flex-row gap-4 justify-center mt-12 opacity-0 translate-y-8 animate-enter" style="animation-delay: 500ms;">
+					<a href="https://visitors.brsgolf.com/billingbearpark" class="bg-brand-gold text-brand-green px-10 py-4 text-sm font-bold uppercase tracking-widest hover:bg-white transition-all duration-300 shadow-xl border border-brand-gold hover:shadow-2xl hover:-translate-y-1">
+						Book a Tee Time
+					</a>
+					<a href="#notice-board" class="bg-black/30 backdrop-blur-md border border-white/30 text-white px-10 py-4 text-sm font-bold uppercase tracking-widest hover:bg-white hover:text-brand-green transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+						Player Info
 					</a>
 				</div>
 			</div>
 		</header>
 
-		<!-- 4. INTRO SECTION -->
-		<section class="py-32 px-6 bg-brand-cream">
-			<div class="max-w-4xl mx-auto text-center">
-				<h2 class="font-serif text-4xl md:text-5xl text-brand-green mb-8 italic">
-					"A seamless blend of history and sport."
-				</h2>
-				<div class="w-24 h-px bg-brand-gold mx-auto mb-10"></div>
-				<p class="text-brand-dark/70 leading-relaxed text-xl font-light">
-					Billingbear Park offers two distinct courses set within 120 acres of mature parkland. 
-					Whether you challenge the strategic <strong class="text-brand-green font-medium">Old Course</strong> or enjoy a relaxed round on the <strong class="text-brand-green font-medium">New Course</strong>, 
-					you are playing on land that once served King Henry VIII.
-				</p>
+		<!-- 4. THE CLUBHOUSE BOARD -->
+		<section id="notice-board" class="relative -mt-24 z-20 px-4 md:px-6 pb-24 reveal">
+			<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+				
+				<!-- A. COLUMNA IZQUIERDA: Player Information & Etiquette -->
+				<div class="lg:col-span-2 bg-brand-cream border-t-4 border-brand-green shadow-2xl p-8 md:p-12 rounded-sm transform transition-all hover:shadow-3xl duration-500">
+					<div class="flex items-center gap-4 mb-8">
+						<div class="p-3 bg-brand-green text-white rounded-full">
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+						</div>
+						<h2 class="font-serif text-3xl text-brand-green">Golfers’ Information & Etiquette</h2>
+					</div>
+					
+					<div class="space-y-8 text-brand-dark/80 leading-relaxed">
+						<div class="bg-white p-6 border-l-4 border-brand-gold shadow-sm hover:shadow-md transition-shadow duration-300">
+							<p class="font-bold text-brand-green mb-2 uppercase text-xs tracking-widest">Today's Conditions:</p>
+							<p class="text-lg">The courses are open. Due to wet conditions, please <strong class="text-brand-dark bg-yellow-100 px-1">tee the ball up on all full shots</strong> or use an astroturf mat.</p>
+							<p class="text-sm mt-3 italic opacity-70 border-t border-brand-stone pt-2">Mats available in the clubhouse for £10 or bring your own.</p>
+						</div>
+
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+							<div class="hover:bg-white p-4 -m-4 rounded transition-colors duration-300">
+								<h4 class="font-bold text-brand-green uppercase text-xs tracking-widest mb-3 border-b border-brand-green/20 pb-1">Winter Wheels</h4>
+								<p class="text-sm">Winter wheels are <strong>required on trollies</strong>. Hedgehog sleeves can be purchased from the clubhouse and fitted to most wheels.</p>
+							</div>
+							<div class="hover:bg-white p-4 -m-4 rounded transition-colors duration-300">
+								<h4 class="font-bold text-brand-green uppercase text-xs tracking-widest mb-3 border-b border-brand-green/20 pb-1">Buggy Rules</h4>
+								<p class="text-sm">Buggies are permitted on the <strong>Old Course only</strong> and must stick to <strong class="underline">paths only</strong> at all times.</p>
+							</div>
+						</div>
+
+						<div class="pt-4 border-t border-brand-stone">
+							<h4 class="font-bold text-brand-green uppercase text-xs tracking-widest mb-2">Pace of Play</h4>
+							<p class="text-sm">Try to keep up with the group in front of you. If you can’t – please stand aside and call faster groups through.</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- B. COLUMNA DERECHA: BUGGY HIRE FORM -->
+				<div id="buggy" class="bg-brand-green text-white shadow-2xl p-8 md:p-10 rounded-sm flex flex-col justify-center relative overflow-hidden group">
+					<div class="absolute top-0 right-0 opacity-10 pointer-events-none transform translate-x-10 -translate-y-10 transition-transform duration-700 group-hover:rotate-12">
+						<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="80" fill="white" /></svg>
+					</div>
+
+					<h3 class="font-serif text-2xl md:text-3xl mb-2 relative z-10">Buggy Hire</h3>
+					<p class="text-white/70 text-sm mb-6 relative z-10 border-b border-white/20 pb-4">Reserve your buggy in advance.</p>
+
+					<form class="space-y-3 relative z-10">
+						<div class="grid grid-cols-2 gap-3">
+							<input type="text" placeholder="First Name *" class="w-full bg-white/10 border border-white/20 rounded-sm p-3 text-sm placeholder-white/50 focus:outline-none focus:bg-white/20 focus:border-brand-gold transition-colors" />
+							<input type="text" placeholder="Surname *" class="w-full bg-white/10 border border-white/20 rounded-sm p-3 text-sm placeholder-white/50 focus:outline-none focus:bg-white/20 focus:border-brand-gold transition-colors" />
+						</div>
+						<input type="email" placeholder="Email Address *" class="w-full bg-white/10 border border-white/20 rounded-sm p-3 text-sm placeholder-white/50 focus:outline-none focus:bg-white/20 focus:border-brand-gold transition-colors" />
+						<input type="date" class="w-full bg-white/10 border border-white/20 rounded-sm p-3 text-sm text-white/80 focus:outline-none focus:bg-white/20 focus:border-brand-gold transition-colors" />
+						
+						<label class="flex items-start gap-3 text-xs text-white/80 mt-2 cursor-pointer hover:text-white transition-colors">
+							<input type="checkbox" class="mt-0.5 accent-brand-gold cursor-pointer" />
+							<span>I confirm I am over 18 and accept the hire conditions.</span>
+						</label>
+
+						<button type="submit" class="w-full bg-brand-gold text-brand-green font-bold uppercase tracking-widest text-xs py-4 mt-4 hover:bg-white transition-all duration-300 shadow-lg border border-brand-gold hover:shadow-xl hover:-translate-y-0.5 transform">
+							Submit Request
+						</button>
+					</form>
+				</div>
 			</div>
 		</section>
 
-		<!-- 5. DYNAMIC VOUCHERS SECTION (BENTO GRID) -->
-		<section id="vouchers" class="py-24 px-6 bg-white border-y border-brand-stone">
+		<!-- 5. OUR COURSES -->
+		<section id="courses" class="py-24 px-6 bg-white reveal">
 			<div class="max-w-7xl mx-auto">
-				<div class="flex justify-between items-end mb-16">
+				<div class="text-center mb-16">
+					<h2 class="font-serif text-5xl text-brand-green mb-6">Our Courses</h2>
+					<div class="w-20 h-px bg-brand-gold mx-auto"></div>
+				</div>
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-16">
+					<!-- Old Course -->
+					<div class="group cursor-pointer">
+						<div class="overflow-hidden mb-8 aspect-[16/10] relative shadow-lg rounded-sm">
+							<img src="https://images.pexels.com/photos/1325681/pexels-photo-1325681.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="The Old Course" class="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-105" />
+							<div class="absolute bottom-6 left-6 bg-brand-green text-white px-5 py-2 text-xs font-bold tracking-widest shadow-md">18 HOLES</div>
+						</div>
+						<h3 class="font-serif text-3xl mb-3 text-brand-green group-hover:text-brand-gold transition-colors duration-300">The Old Course</h3>
+						<p class="text-brand-dark/70 font-light leading-relaxed mb-6 text-lg">
+							Designed by Martin Hawtree. A true test of strategy winding through mature parkland and ancient woodland.
+						</p>
+						<a href="/courses/old-course" class="inline-flex items-center text-brand-green font-bold uppercase tracking-widest text-xs border-b-2 border-brand-gold pb-1 hover:text-brand-gold transition-all duration-300">Explore the Course &rarr;</a>
+					</div>
+
+					<!-- New Course -->
+					<div class="group cursor-pointer">
+						<div class="overflow-hidden mb-8 aspect-[16/10] relative shadow-lg rounded-sm">
+							<img src="https://images.pexels.com/photos/274133/pexels-photo-274133.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="The New Course" class="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-105" />
+							<div class="absolute bottom-6 left-6 bg-brand-green text-white px-5 py-2 text-xs font-bold tracking-widest shadow-md">9 HOLES PAR 3</div>
+						</div>
+						<h3 class="font-serif text-3xl mb-3 text-brand-green group-hover:text-brand-gold transition-colors duration-300">The New Course</h3>
+						<p class="text-brand-dark/70 font-light leading-relaxed mb-6 text-lg">
+							A beautifully maintained par 3 course with water hazards. Perfect for beginners or sharpening your short game.
+						</p>
+						<a href="/courses/new-course" class="inline-flex items-center text-brand-green font-bold uppercase tracking-widest text-xs border-b-2 border-brand-gold pb-1 hover:text-brand-gold transition-all duration-300">Explore the Course &rarr;</a>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- 6. HERITAGE & HISTORY -->
+		<section id="heritage" class="py-24 px-6 bg-brand-cream border-t border-brand-stone reveal">
+			<div class="max-w-7xl mx-auto">
+				<div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+					<div class="order-2 lg:order-1 relative">
+						<div class="absolute -top-10 -left-10 w-32 h-32 border-t-2 border-l-2 border-brand-gold/30 rounded-tl-3xl"></div>
+						<span class="text-brand-gold uppercase tracking-widest text-xs font-bold">1086 — Present Day</span>
+						<h2 class="font-serif text-4xl md:text-5xl text-brand-green mt-4 mb-8">A Landscape Steeped in History</h2>
+						
+						<div class="space-y-6 text-brand-dark/80 font-light text-lg leading-relaxed border-l border-brand-green/20 pl-6">
+							<p>
+								From its first mention in the <strong>Domesday Book (1086)</strong> as part of the royal lands of King William, Billingbear has been home to royalty, Tudor nobility, and literary legend.
+							</p>
+							<p>
+								It is whispered that <strong>Shakespeare's</strong> <em>The Merry Wives of Windsor</em> may have been composed here under the patronage of the Neville family.
+							</p>
+							<p>
+								In 1989, this ancient parkland was reimagined by renowned architect <strong>Martin Hawtree</strong> (Royal Birkdale, Trump International), creating a championship course that respects the centuries-old woodland.
+							</p>
+						</div>
+
+						<div class="mt-10">
+							<a href="/history" class="inline-block border border-brand-green text-brand-green px-8 py-3 text-xs uppercase tracking-widest font-bold hover:bg-brand-green hover:text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+								Read the full story &rarr;
+							</a>
+						</div>
+					</div>
+					
+					<div class="order-1 lg:order-2 group">
+						<div class="relative aspect-square md:aspect-[4/3] overflow-hidden rounded-sm shadow-xl transition-all duration-1000">
+							<img src={heritageImage} alt="Historic Oak Tree at Billingbear" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-[2s] ease-out group-hover:scale-105" />
+							<div class="absolute inset-0 bg-brand-green/10 mix-blend-multiply group-hover:opacity-0 transition-opacity duration-1000"></div>
+						</div>
+						<p class="text-right text-xs text-brand-dark/40 mt-2 italic">The ancient woodlands of Billingbear Park</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- 7. DYNAMIC VOUCHERS SECTION -->
+		<section id="vouchers" class="py-24 px-6 bg-white border-t border-brand-stone reveal">
+			<div class="max-w-7xl mx-auto">
+				<div class="flex flex-col md:flex-row justify-between items-baseline mb-12 gap-4">
 					<div>
 						<span class="text-brand-gold uppercase tracking-widest text-xs font-bold">The Pro Shop</span>
 						<h3 class="font-serif text-4xl text-brand-green mt-2">Gift Experiences</h3>
 					</div>
-					<div class="hidden md:block">
-						<p class="text-brand-dark/50 italic text-sm font-serif">Perfect for every occasion</p>
-					</div>
+					<a href="#" class="text-brand-green text-sm font-bold border-b border-brand-green/20 pb-1 hover:text-brand-gold transition-colors duration-300">View all vouchers &rarr;</a>
 				</div>
 
-				<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 					{vouchers.map((voucher: any) => {
 						const isFeatured = voucher.acf?.is_featured;
 						const price = voucher.acf?.price;
 						const cta = voucher.acf?.cta_link || '#';
 						
 						return (
-							<div class={`group relative overflow-hidden cursor-pointer rounded-sm shadow-sm hover:shadow-xl transition-all duration-500 ${isFeatured ? 'md:col-span-2 h-[500px]' : 'h-[500px] bg-brand-cream border border-brand-stone'}`}>
-								
-								<img src={getImageUrl(voucher)} class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt={voucher.title.rendered} />
-								
-								{/* Overlay para legibilidad */}
+							<div class={`group relative overflow-hidden cursor-pointer rounded-sm shadow-sm hover:shadow-2xl transition-all duration-700 ${isFeatured ? 'md:col-span-2 h-[450px]' : 'h-[450px] bg-brand-cream border border-brand-stone'}`}>
+								<img src={getImageUrl(voucher)} class="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110" alt={voucher.title.rendered} />
 								<div class={`absolute inset-0 ${isFeatured ? 'bg-brand-green/40 group-hover:bg-brand-green/60' : 'bg-black/20 group-hover:bg-black/40'} transition-colors duration-500`}></div>
-
 								<div class="absolute inset-0 p-10 flex flex-col justify-between z-10">
 									<div class="flex justify-between items-start">
-										{isFeatured ? (
-											<span class="bg-white text-brand-green text-[10px] font-bold px-3 py-1 uppercase tracking-widest w-fit">Featured Experience</span>
-										) : (
-											<span class="bg-brand-green text-white text-[10px] font-bold px-3 py-1 uppercase tracking-widest w-fit">Voucher</span>
+										{isFeatured && (
+											<span class="bg-white text-brand-green text-[10px] font-bold px-3 py-1 uppercase tracking-widest w-fit transform -translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">Featured</span>
 										)}
 									</div>
-									
-									<div class="text-white">
-										<h4 class="font-serif text-4xl mb-3 leading-tight" set:html={voucher.title.rendered}></h4>
-										<div class="text-base opacity-90 mb-6 font-light line-clamp-3" set:html={voucher.content.rendered}></div>
-										
+									<div class="text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+										<h4 class="font-serif text-3xl mb-2 leading-tight" set:html={voucher.title.rendered}></h4>
+										<div class="text-sm opacity-90 mb-6 font-light line-clamp-2" set:html={voucher.content.rendered}></div>
 										<div class="flex items-center gap-6">
-											<span class="text-brand-gold text-3xl font-serif italic">{price}</span>
-											<a href={cta} class="bg-white/10 backdrop-blur-md border border-white/30 text-white px-6 py-2 text-xs uppercase tracking-widest font-bold hover:bg-white hover:text-brand-green transition-all">
-												Purchase &rarr;
-											</a>
+											<span class="text-brand-gold text-2xl font-serif italic">{price}</span>
+											<a href={cta} class="bg-white text-brand-green px-6 py-2 text-xs uppercase tracking-widest font-bold hover:bg-brand-gold hover:text-white transition-all duration-300">Buy &rarr;</a>
 										</div>
 									</div>
 								</div>
@@ -152,35 +284,191 @@ const displayStatus = courseStatus ? courseStatus.replace('_', ' ') : 'Open';
 				</div>
 			</div>
 		</section>
+
+		<!-- 8. THE CLUBHOUSE & SOCIAL -->
+		<section id="social" class="py-24 px-6 bg-brand-green text-brand-cream relative overflow-hidden reveal">
+			<!-- Background Pattern con animación sutil -->
+			<div class="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] animate-pulse"></div>
+			
+			<div class="max-w-7xl mx-auto relative z-10">
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+					<div>
+						<span class="text-brand-gold uppercase tracking-widest text-xs font-bold">Aprés Golf</span>
+						<h2 class="font-serif text-5xl mb-6 mt-2">The Clubhouse</h2>
+						<p class="text-white/80 text-lg font-light leading-relaxed mb-8">
+							Looking for more than golf? Gather in the clubhouse for great food, a relaxed atmosphere, and a game of Shuffleboard. Perfect for families, groups, or settling a score after 18 holes.
+						</p>
+						
+						<div class="flex flex-col sm:flex-row gap-8 mt-10">
+							<div class="flex items-start gap-4 group cursor-pointer">
+								<div class="bg-brand-gold/20 p-3 rounded-full text-brand-gold group-hover:bg-brand-gold group-hover:text-brand-green transition-colors duration-300">
+									<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"></circle><circle cx="12" cy="12" r="3" fill="currentColor"></circle></svg>
+								</div>
+								<div>
+									<h4 class="font-serif text-2xl mb-1 group-hover:text-brand-gold transition-colors">Shuffleboard</h4>
+									<p class="text-sm text-white/60 mb-2">From £10 / 30 mins</p>
+									<a href="#" class="text-brand-gold text-xs font-bold uppercase tracking-widest hover:text-white transition-colors">Book a Table &rarr;</a>
+								</div>
+							</div>
+							
+							<div class="flex items-start gap-4 group cursor-pointer">
+								<div class="bg-brand-gold/20 p-3 rounded-full text-brand-gold group-hover:bg-brand-gold group-hover:text-brand-green transition-colors duration-300">
+									<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+								</div>
+								<div>
+									<h4 class="font-serif text-2xl mb-1 group-hover:text-brand-gold transition-colors">The Kitchen</h4>
+									<p class="text-sm text-white/60 mb-2">Famous Full English</p>
+									<a href="#" class="text-brand-gold text-xs font-bold uppercase tracking-widest hover:text-white transition-colors">View Menu &rarr;</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="relative group">
+						<!-- Imagen Shuffleboard/Social -->
+						<img src={shuffleboardImage} alt="Shuffleboard at Billingbear" class="rounded-sm shadow-2xl border-4 border-brand-gold/20 transform rotate-2 group-hover:rotate-0 transition-transform duration-700 ease-out" />
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- 9. EVENTS & PRIVATE HIRE -->
+		<section id="events" class="py-24 px-6 bg-brand-cream border-t border-brand-stone reveal">
+			<div class="max-w-7xl mx-auto">
+				<div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+					<!-- Content -->
+					<div class="order-2 lg:order-1">
+						<span class="text-brand-gold uppercase tracking-widest text-xs font-bold">Venue Hire</span>
+						<h2 class="font-serif text-4xl md:text-5xl text-brand-green mt-2 mb-6">Celebrate at Billingbear</h2>
+						<p class="text-brand-dark/70 text-lg font-light leading-relaxed mb-6">
+							Billingbear Park is a fantastic venue for private functions. With no neighbours, you’re able to turn up the music and enjoy an evening with friends and family in beautiful private surroundings.
+						</p>
+						
+						<ul class="space-y-4 mb-8 text-sm text-brand-dark/80">
+							<li class="flex items-center gap-3">
+								<svg class="w-5 h-5 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+								<span>Capacity for up to <strong>120 guests</strong> (Clubhouse + Marquee).</span>
+							</li>
+							<li class="flex items-center gap-3">
+								<svg class="w-5 h-5 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+								<span>Summer canopy with patio heaters for year-round comfort.</span>
+							</li>
+						</ul>
+
+						<div class="bg-white border-l-4 border-brand-green p-6 shadow-sm mb-8 hover:shadow-lg transition-shadow duration-300">
+							<h4 class="font-serif text-xl text-brand-green mb-2">Golf-Themed Buffets & BBQs</h4>
+							<p class="text-sm text-brand-dark/70 mb-3">Our bespoke catering options include menus named after legends:</p>
+							<div class="flex flex-wrap gap-2">
+								<span class="bg-brand-stone/50 px-3 py-1 text-xs rounded-full font-medium hover:bg-brand-green hover:text-white transition-colors cursor-default">The Palmer</span>
+								<span class="bg-brand-stone/50 px-3 py-1 text-xs rounded-full font-medium hover:bg-brand-green hover:text-white transition-colors cursor-default">The Nicklaus</span>
+								<span class="bg-brand-stone/50 px-3 py-1 text-xs rounded-full font-medium hover:bg-brand-green hover:text-white transition-colors cursor-default">The Faldo Hog Roast</span>
+							</div>
+						</div>
+
+						<div class="flex items-center gap-6">
+							<span class="text-brand-green text-lg font-bold">Hire from £600</span>
+							<a href="mailto:info@billingbearpark.com" class="bg-brand-green text-white px-8 py-3 text-xs uppercase tracking-widest font-bold hover:bg-brand-gold transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">Enquire Now &rarr;</a>
+						</div>
+					</div>
+
+					<!-- Image & Testimonial -->
+					<div class="order-1 lg:order-2 relative group">
+						<div class="overflow-hidden rounded-sm shadow-2xl aspect-[4/5] relative">
+							<img src={eventsImage} alt="Events at Billingbear" class="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105" />
+							<!-- Testimonial Overlay -->
+							<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-8 pt-24 text-white">
+								<div class="font-serif italic text-lg leading-relaxed opacity-90 mb-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+									“Please accept our sincere thanks for helping to make our 50th wedding anniversary a resounding success. Your staff were really helpful and made everything run really smoothly.”
+								</div>
+								<div class="text-xs font-bold uppercase tracking-widest text-brand-gold">— Rosalind and Ted</div>
+							</div>
+						</div>
+						<!-- Decorative Element -->
+						<div class="absolute -z-10 top-10 -right-10 w-full h-full border-2 border-brand-gold/30 rounded-sm group-hover:translate-x-2 group-hover:translate-y-2 transition-transform duration-500"></div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- 10. FOOTER -->
+		<footer class="bg-brand-dark text-brand-cream py-20 px-6 reveal" id="contact">
+			<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-16">
+				<div>
+					<img 
+						src={logoUrl} 
+						alt="Billingbear Park" 
+						class="h-12 w-auto brightness-0 invert opacity-50 mb-6 hover:opacity-100 transition-opacity duration-300" 
+					/>
+					<p class="text-white/40 text-sm leading-relaxed max-w-xs font-light">
+						Historic golf in the heart of Berkshire. <br>Accessible to all, steeped in history.
+					</p>
+				</div>
+				<div class="grid grid-cols-2 gap-8 col-span-2">
+					<div class="space-y-4">
+						<h5 class="text-brand-gold uppercase tracking-widest text-xs font-bold mb-6 opacity-60">Navigate</h5>
+						<ul class="space-y-3 text-sm text-white/60">
+							<li><a href="#" class="hover:text-brand-gold transition-colors duration-300">Book Tee Time</a></li>
+							<li><a href="#vouchers" class="hover:text-brand-gold transition-colors duration-300">Gift Vouchers</a></li>
+							<li><a href="#social" class="hover:text-brand-gold transition-colors duration-300">Shuffleboard</a></li>
+							<li><a href="#events" class="hover:text-brand-gold transition-colors duration-300">Events & Weddings</a></li>
+						</ul>
+					</div>
+					<div class="space-y-4">
+						<h5 class="text-brand-gold uppercase tracking-widest text-xs font-bold mb-6 opacity-60">Contact</h5>
+						<ul class="space-y-3 text-sm text-white/60 italic">
+							<li class="not-italic">The Straight Mile, Wokingham</li>
+							<li class="not-italic">Berkshire, RG40 5SJ</li>
+							<li class="not-italic text-white pt-4 text-lg font-serif hover:text-brand-gold transition-colors duration-300 cursor-pointer">+44 (0) 1344 860 860</li>
+							<li class="not-italic opacity-50 hover:opacity-100 transition-opacity duration-300 cursor-pointer">info@billingbearpark.com</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/5 text-[10px] uppercase tracking-[0.2em] opacity-30 text-center flex justify-between">
+				<span>© {new Date().getFullYear()} Billingbear Park</span>
+				<span>Designed for Golfers</span>
+			</div>
+		</footer>
 	</main>
 
-	<!-- 6. FOOTER -->
-	<footer class="bg-brand-green text-brand-cream py-20 px-6">
-		<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-16">
-			<div>
-				<div class="font-serif text-3xl mb-8">Billingbear Park</div>
-				<p class="text-white/60 text-sm leading-relaxed max-w-xs">
-					Historic golf in the heart of Berkshire. A Martin Hawtree design built on Tudor grounds.
-				</p>
-			</div>
-			<div class="grid grid-cols-2 gap-8 col-span-2">
-				<div class="space-y-4">
-					<h5 class="text-brand-gold uppercase tracking-widest text-xs font-bold mb-6">Explore</h5>
-					<ul class="space-y-3 text-sm text-white/70">
-						<li><a href="#" class="hover:text-white transition-colors">The Old Course</a></li>
-						<li><a href="#" class="hover:text-white transition-colors">The New Course</a></li>
-						<li><a href="#" class="hover:text-white transition-colors">Heritage</a></li>
-					</ul>
-				</div>
-				<div class="space-y-4">
-					<h5 class="text-brand-gold uppercase tracking-widest text-xs font-bold mb-6">Contact</h5>
-					<ul class="space-y-3 text-sm text-white/70 italic">
-						<li>The Straight Mile, Wokingham</li>
-						<li>Berkshire, RG40 5SJ</li>
-						<li class="not-italic text-white pt-2 font-bold underline">+44 (0) 1344 860 860</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-	</footer>
+	<!-- Script de Animación (Scroll Reveal) -->
+	<script>
+		// Simple Intersection Observer para animaciones al hacer scroll
+		document.addEventListener('DOMContentLoaded', () => {
+			const observer = new IntersectionObserver((entries) => {
+				entries.forEach(entry => {
+					if (entry.isIntersecting) {
+						entry.target.classList.add('active');
+					}
+				});
+			}, { threshold: 0.1 });
+
+			document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+		});
+	</script>
+
+	<style>
+		/* Estilos para la animación de entrada */
+		@keyframes fadeInUp {
+			from { opacity: 0; transform: translateY(30px); }
+			to { opacity: 1; transform: translateY(0); }
+		}
+
+		.animate-enter {
+			animation: fadeInUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+		}
+
+		/* Clase base para elementos ocultos que se revelarán */
+		.reveal {
+			opacity: 0;
+			transform: translateY(40px);
+			transition: all 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+		}
+		
+		/* Estado activo al entrar en viewport */
+		.reveal.active {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	</style>
 </Layout>
