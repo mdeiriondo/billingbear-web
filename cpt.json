@@ -1,0 +1,194 @@
+{
+  "acf_export": [
+    {
+      "key": "group_65c1234567890",
+      "title": "Hole Details",
+      "fields": [
+        {
+          "key": "field_hole_number",
+          "label": "Hole Number",
+          "name": "hole_number",
+          "type": "number",
+          "required": 1
+        },
+        {
+          "key": "field_hole_par",
+          "label": "Par",
+          "name": "par",
+          "type": "number",
+          "required": 1
+        },
+        {
+          "key": "field_yards_white",
+          "label": "Yards (White)",
+          "name": "yards_white",
+          "type": "number"
+        },
+        {
+          "key": "field_yards_yellow",
+          "label": "Yards (Yellow)",
+          "name": "yards_yellow",
+          "type": "number"
+        },
+        {
+          "key": "field_yards_red",
+          "label": "Yards (Red)",
+          "name": "yards_red",
+          "type": "number"
+        },
+        {
+          "key": "field_stroke_index",
+          "label": "Stroke Index",
+          "name": "stroke_index",
+          "type": "number"
+        },
+        {
+          "key": "field_pro_tip",
+          "label": "Pro Tip",
+          "name": "pro_tip",
+          "type": "textarea",
+          "instructions": "Enter the professional's technical advice for playing this hole."
+        },
+        {
+          "key": "field_drone_url",
+          "label": "Flyover Video URL",
+          "name": "drone_video_url",
+          "type": "url",
+          "instructions": "YouTube or Vimeo URL for the hole flyover video."
+        }
+      ],
+      "location": [
+        [
+          {
+            "param": "post_type",
+            "operator": "==",
+            "value": "holes"
+          }
+        ]
+      ],
+      "show_in_rest": 1
+    },
+    {
+      "key": "group_course_status",
+      "title": "Course Status & Information",
+      "fields": [
+        {
+          "key": "field_course_status",
+          "label": "Current Course Status",
+          "name": "course_status",
+          "type": "select",
+          "choices": {
+            "open": "Open",
+            "closed": "Closed",
+            "trolleys_ban": "Trolleys Ban",
+            "hedgehogs_only": "Hedgehog Wheels Only"
+          },
+          "default_value": "open",
+          "ui": 1
+        },
+        {
+          "key": "field_course_history",
+          "label": "Historical Context",
+          "name": "historical_context",
+          "type": "wysiwyg",
+          "instructions": "Historical information regarding the Tudor or Neville lineage related to this specific area."
+        }
+      ],
+      "location": [
+        [
+          {
+            "param": "post_type",
+            "operator": "==",
+            "value": "courses"
+          }
+        ]
+      ],
+      "show_in_rest": 1
+    },
+    {
+      "key": "group_voucher_details",
+      "title": "Voucher Details",
+      "fields": [
+        {
+          "key": "field_voucher_price",
+          "label": "Price",
+          "name": "price",
+          "type": "text",
+          "instructions": "e.g. £65.00 or £10 - £100"
+        },
+        {
+          "key": "field_voucher_featured",
+          "label": "Featured in Bento Grid",
+          "name": "is_featured",
+          "type": "true_false",
+          "instructions": "If enabled, this voucher will occupy a larger area within the Astro frontend layout.",
+          "ui": 1
+        },
+        {
+          "key": "field_voucher_cta",
+          "label": "Checkout Link",
+          "name": "cta_link",
+          "type": "url",
+          "instructions": "Direct link to the Stripe or Square checkout page."
+        }
+      ],
+      "location": [
+        [
+          {
+            "param": "post_type",
+            "operator": "==",
+            "value": "vouchers"
+          }
+        ]
+      ],
+      "show_in_rest": 1
+    }
+  ],
+  "cptui_export": {
+    "courses": {
+      "name": "courses",
+      "label": "Courses",
+      "singular_label": "Course",
+      "description": "Billingbear Golf Courses (Old and New)",
+      "public": "true",
+      "show_ui": "true",
+      "show_in_nav_menus": "true",
+      "show_in_rest": "true",
+      "has_archive": "true",
+      "delete_with_user": "false",
+      "hierarchical": "false",
+      "menu_icon": "dashicons-location-alt",
+      "supports": ["title", "editor", "thumbnail", "excerpt", "custom-fields"]
+    },
+    "holes": {
+      "name": "holes",
+      "label": "Holes",
+      "singular_label": "Hole",
+      "description": "Individual hole details for the courses",
+      "public": "true",
+      "show_ui": "true",
+      "show_in_nav_menus": "true",
+      "show_in_rest": "true",
+      "has_archive": "true",
+      "delete_with_user": "false",
+      "hierarchical": "false",
+      "menu_icon": "dashicons-flag",
+      "supports": ["title", "thumbnail", "custom-fields"]
+    },
+    "vouchers": {
+      "name": "vouchers",
+      "label": "Vouchers",
+      "singular_label": "Voucher",
+      "description": "Gift vouchers and experiences",
+      "public": "true",
+      "show_ui": "true",
+      "show_in_nav_menus": "true",
+      "show_in_rest": "true",
+      "has_archive": "true",
+      "delete_with_user": "false",
+      "hierarchical": "false",
+      "menu_icon": "dashicons-tickets-alt",
+      "supports": ["title", "editor", "thumbnail", "custom-fields"]
+    }
+  }
+}
