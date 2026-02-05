@@ -1,43 +1,76 @@
-# Astro Starter Kit: Minimal
+Billingbear Park Golf Course - Web Redesign ⛳️
 
-```sh
-npm create astro@latest -- --template minimal
-```
+This project involves the comprehensive migration and redesign of the Billingbear Park Golf Course website. The primary objective is to transform a dated and heavy digital presence (previously built on WordPress + WooCommerce) into a high-performance platform featuring a "Heritage Modern" design and an optimised content architecture.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+🏛 Project Vision
 
-## 🚀 Project Structure
+Billingbear Park is not merely a golf course; it is a site steeped in nearly a millennium of history (Tudor, Shakespeare, Neville). The redesign aims to:
 
-Inside of your Astro project, you'll see the following folders and files:
+Elevate the Brand: Move away from a generic "municipal" aesthetic towards a "Club with Heritage" feel.
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+Optimise Conversion: Streamline the purchase of the 11 gift vouchers and the booking of Tee Times.
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+Extreme Performance: Achieve a 100/100 Lighthouse score by utilising modern static technologies.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+🛠 Tech Stack
 
-Any static assets, like images, can be placed in the `public/` directory.
+We have chosen a Headless/JAMstack approach for this development:
 
-## 🧞 Commands
+Frontend: Astro 5 (Island Architecture for maximum speed).
 
-All commands are run from the root of the project, from a terminal:
+Styling: Tailwind CSS 4 (CSS-first configuration).
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+Components: React (for islands of interactivity).
 
-## 👀 Want to learn more?
+Backend (CMS): Headless WordPress (via REST API) for content management.
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+E-commerce: Migration from WooCommerce to a lightweight solution (Stripe/Square/Payment Links) for selling the 11 gift vouchers.
+
+🎨 Design Concept: "Heritage Modern"
+
+Colour Palette: British Racing Green, Paper Cream, Muted Gold, and Charcoal.
+
+Typography:
+
+Playfair Display (Serif) to evoke tradition and history.
+
+Inter (Sans) for a clean and modern user interface.
+
+Key UX Features:
+
+Course Status Bar: Real-time information regarding course availability (Old/New Course).
+
+Bento Grid Vouchers: An asymmetric, visual presentation of gift experiences.
+
+Scrollytelling: An integrated historical narrative throughout the course tour.
+
+📈 Current Project Status
+
+[x] Strategic analysis and Master Plan proposal.
+[x] Definition of Information Architecture (CPTs and ACF).
+[x] Local environment setup (LocalWP).
+[x] Initial setup of Astro 5 + Tailwind 4 + React.
+[x] Implementation of base Layout and Design System.
+[ ] Connection to the WordPress API.
+[ ] Development of the Voucher Grid component.
+[ ] Payment gateway integration (TBD: Stripe/Square).
+[ ] Automated PDF Voucher generation system.
+
+🚀 Development Instructions
+
+Install dependencies:
+
+npm install
+
+Start the development server:
+
+npm run dev
+
+
+WordPress Configuration:
+
+Ensure ACF Pro and CPT UI are installed.
+
+Configure endpoints for Courses, Holes, and Vouchers.
+
+Developed with ❤️ for Billingbear Park.
