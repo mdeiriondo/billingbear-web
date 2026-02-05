@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@theme {
+  /* Tipografías Heritage */
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Inter", sans-serif;
+
+  /* Paleta de Colores Billingbear */
+  --color-brand-green: #1A3C34;
+  --color-brand-gold: #C8A97E;
+  --color-brand-cream: #F4F2ED;
+  --color-brand-dark: #1F1F1F;
+  --color-brand-stone: #E5E5E0;
+  
+  /* Utilidades personalizadas */
+  --animate-fade-up: fadeInUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estilos base para suavizar la experiencia */
+body {
+  background-color: var(--color-brand-cream);
+  color: var(--color-brand-dark);
+}
+
+.hero-overlay {
+  background: linear-gradient(to top, #1A3C34 0%, transparent 80%);
+}
