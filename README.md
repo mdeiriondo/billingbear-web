@@ -38,13 +38,13 @@ We have chosen a **Headless/JAMstack** approach for this development:
 
 ## 🚀 Development Instructions
 1. **Install dependencies:**
-	```
-npm install
-```
+    ```
+    npm install
+    ```
 2. **Start the development server:**
-	```
-npm run dev
-```
+    ```
+    npm run dev
+    ```
 3. **WordPress Configuration:**
 	- Ensure ACF Pro and CPT UI are installed.
 	- Configure endpoints for `Courses`, `Holes`, and `Vouchers`.
