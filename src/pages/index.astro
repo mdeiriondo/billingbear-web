@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import { getVouchers, getCourseStatus } from '../lib/wp';
 
-// Fetch de datos
+// Fetch de datos reales desde WordPress
 const vouchers = await getVouchers();
 
 // Datos de estado para la demo con descripciones detalladas para el sistema de "Reveal"
@@ -262,7 +262,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 						<p class="text-brand-dark/70 font-light leading-relaxed mb-6 text-base md:text-lg">
 							Designed by Martin Hawtree. A true test of strategy winding through mature parkland and ancient woodland.
 						</p>
-						<a href="/courses/old-course" class="inline-flex items-center text-brand-green font-bold uppercase tracking-widest text-[10px] border-b-2 border-brand-gold pb-1 hover:text-brand-gold transition-all duration-300">Explore the Course &rarr;</a>
+						<a href="/courses/old-course" class="inline-flex items-center text-brand-green font-bold uppercase tracking-widest text-[10px] border-b-2 border-brand-gold pb-1 hover:text-brand-gold transition-all duration-300 leading-none">Explore the Course &rarr;</a>
 					</div>
 
 					<!-- New Course -->
@@ -275,7 +275,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 						<p class="text-brand-dark/70 font-light leading-relaxed mb-6 text-base md:text-lg">
 							A beautifully maintained par 3 course with water hazards. Perfect for beginners or sharpening your short game.
 						</p>
-						<a href="/courses/new-course" class="inline-flex items-center text-brand-green font-bold uppercase tracking-widest text-[10px] border-b-2 border-brand-gold pb-1 hover:text-brand-gold transition-all duration-300">Explore the Course &rarr;</a>
+						<a href="/courses/new-course" class="inline-flex items-center text-brand-green font-bold uppercase tracking-widest text-[10px] border-b-2 border-brand-gold pb-1 hover:text-brand-gold transition-all duration-300 leading-none">Explore the Course &rarr;</a>
 					</div>
 				</div>
 			</div>
@@ -320,39 +320,45 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 			</div>
 		</section>
 
-		<!-- 7. DYNAMIC VOUCHERS SECTION -->
+		<!-- 7. BENTO VOUCHERS SECTION (INTEGRADO CON WOO) -->
 		<section id="vouchers" class="py-24 px-6 bg-white border-t border-brand-stone reveal">
 			<div class="max-w-7xl mx-auto">
 				<div class="flex flex-col md:flex-row justify-between items-baseline mb-12 gap-4">
 					<div>
 						<span class="text-brand-gold uppercase tracking-widest text-[10px] font-bold">The Pro Shop</span>
-						<h3 class="font-serif text-3xl md:text-4xl text-brand-green mt-2 leading-tight italic">Gift Experiences</h3>
+						<h3 class="font-serif text-3xl md:text-4xl text-brand-green mt-2 leading-tight italic italic">Exclusive Gift Experiences</h3>
 					</div>
 					<a href="#" class="text-brand-green text-xs font-bold border-b border-brand-green/20 pb-1 hover:text-brand-gold transition-colors duration-300 tracking-wide">View all vouchers &rarr;</a>
 				</div>
 
-				<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-					{vouchers.map((voucher: any) => {
+				<!-- Bento Grid de Vouchers -->
+				<div class="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-[350px]">
+					{vouchers.map((voucher: any, index: number) => {
 						const isFeatured = voucher.acf?.is_featured;
 						const price = voucher.acf?.price;
-						const cta = voucher.acf?.cta_link || '#';
+						const wooId = voucher.acf?.woo_product_id;
+                        // Si hay ID de WooCommerce, link directo al checkout, si no al link manual.
+						const cta = voucher.acf?.cta_link || (wooId ? `https://billingbearpark.com/checkout/?add-to-cart=${wooId}` : '#');
 						
 						return (
-							<div class={`group relative overflow-hidden cursor-pointer rounded-sm shadow-sm hover:shadow-2xl transition-all duration-700 ${isFeatured ? 'md:col-span-2 h-[400px] md:h-[450px]' : 'h-[400px] md:h-[450px] bg-brand-cream border border-brand-stone'}`}>
+							<div class={`group relative overflow-hidden rounded-sm shadow-sm hover:shadow-2xl transition-all duration-700 
+                                ${isFeatured ? 'md:col-span-2 md:row-span-2 h-full' : 'h-full bg-brand-cream border border-brand-stone'}`}>
+								
 								<img src={getImageUrl(voucher)} class="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110" alt={voucher.title.rendered} />
 								<div class={`absolute inset-0 ${isFeatured ? 'bg-brand-green/40 group-hover:bg-brand-green/60' : 'bg-black/20 group-hover:bg-black/40'} transition-colors duration-500`}></div>
+								
 								<div class="absolute inset-0 p-6 md:p-10 flex flex-col justify-between z-10">
 									<div class="flex justify-between items-start">
 										{isFeatured && (
-											<span class="bg-white text-brand-green text-[9px] font-bold px-3 py-1 uppercase tracking-widest w-fit transform -translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">Featured</span>
+											<span class="bg-white text-brand-green text-[9px] font-bold px-3 py-1 uppercase tracking-widest w-fit transform -translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 leading-none">Best Seller</span>
 										)}
 									</div>
 									<div class="text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-										<h4 class="font-serif text-2xl md:text-3xl mb-2 leading-tight italic" set:html={voucher.title.rendered}></h4>
-										<div class="text-xs md:text-sm opacity-90 mb-6 font-light line-clamp-2" set:html={voucher.content.rendered}></div>
+										<h4 class={`font-serif italic mb-2 leading-tight ${isFeatured ? 'text-2xl md:text-4xl' : 'text-xl md:text-2xl'}`} set:html={voucher.title.rendered}></h4>
+										<div class="text-xs md:text-sm opacity-90 mb-6 font-light line-clamp-2 max-w-sm" set:html={voucher.content.rendered}></div>
 										<div class="flex items-center gap-6">
 											<span class="text-brand-gold text-2xl font-serif italic">{price}</span>
-											<a href={cta} class="bg-white text-brand-green px-5 py-2 text-[10px] uppercase tracking-widest font-bold hover:bg-brand-gold hover:text-white transition-all duration-300 leading-none">Buy &rarr;</a>
+											<a href={cta} target="_blank" class="bg-white text-brand-green px-5 py-2.5 text-[10px] uppercase tracking-widest font-bold hover:bg-brand-gold hover:text-white transition-all duration-300 leading-none shadow-lg">Purchase &rarr;</a>
 										</div>
 									</div>
 								</div>
@@ -371,7 +377,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
 					<div>
 						<span class="text-brand-gold uppercase tracking-widest text-[10px] font-bold">Aprés Golf</span>
-						<h2 class="font-serif text-4xl md:text-5xl mb-6 mt-2 italic leading-tight">The Clubhouse</h2>
+						<h2 class="font-serif text-4xl md:text-5xl mb-6 mt-2 italic leading-tight italic">The Clubhouse</h2>
 						<p class="text-white/80 text-base md:text-lg font-light leading-relaxed mb-8">
 							Looking for more than golf? Gather in the clubhouse for great food, a relaxed atmosphere, and a game of Shuffleboard. Perfect for families, groups, or settling a score after 18 holes.
 						</p>
@@ -383,8 +389,8 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 								</div>
 								<div>
 									<h4 class="font-serif text-2xl mb-1 group-hover:text-brand-gold transition-colors italic">Shuffleboard</h4>
-									<p class="text-[10px] text-white/60 mb-2 uppercase tracking-wide font-bold">From £10 / 30 mins</p>
-									<button class="text-brand-gold text-[10px] font-bold uppercase tracking-widest hover:text-white transition-colors cursor-pointer border-b border-brand-gold/30 pb-0.5 leading-none">Book a Table &rarr;</button>
+									<p class="text-[10px] text-white/60 mb-2 uppercase tracking-wide font-bold leading-none">From £10 / 30 mins</p>
+									<button class="text-brand-gold text-[10px] font-bold uppercase tracking-widest hover:text-white transition-colors cursor-pointer border-b border-brand-gold/30 pb-0.5 leading-none mt-2">Book a Table &rarr;</button>
 								</div>
 							</div>
 							
@@ -395,7 +401,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 								<div>
 									<h4 class="font-serif text-2xl mb-1 group-hover:text-brand-gold transition-colors italic">The Kitchen</h4>
 									<p class="text-[10px] text-white/60 mb-2 uppercase tracking-wide font-bold">Famous Full English</p>
-									<a href="#" class="text-brand-gold text-[10px] font-bold uppercase tracking-widest hover:text-white transition-colors border-b border-brand-gold/30 pb-0.5 leading-none">View Menu &rarr;</a>
+									<a href="#" class="text-brand-gold text-[10px] font-bold uppercase tracking-widest hover:text-white transition-colors border-b border-brand-gold/30 pb-0.5 leading-none mt-2">View Menu &rarr;</a>
 								</div>
 							</div>
 						</div>
@@ -410,54 +416,52 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 
 		<!-- 9. EVENTS & PRIVATE HIRE -->
 		<section id="events" class="py-24 px-6 bg-brand-cream border-t border-brand-stone reveal">
-			<div class="max-w-7xl mx-auto">
-				<div class="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-center">
-					<div class="order-2 lg:order-1">
-						<span class="text-brand-gold uppercase tracking-widest text-[10px] font-bold">Venue Hire</span>
-						<h2 class="font-serif text-3xl md:text-5xl text-brand-green mt-2 mb-6 leading-tight italic italic">Celebrate at Billingbear</h2>
-						<p class="text-brand-dark/70 text-base md:text-lg font-light leading-relaxed mb-6">
-							Billingbear Park is a fantastic venue for private functions. With no neighbours, you’re able to turn up the music and enjoy an evening with friends and family in beautiful private surroundings.
-						</p>
-						
-						<ul class="space-y-4 mb-8 text-[11px] md:text-sm text-brand-dark/80">
-							<li class="flex items-center gap-3">
-								<svg class="w-5 h-5 text-brand-gold shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-								<span>Capacity for up to <strong>120 guests</strong> (Clubhouse + Marquee).</span>
-							</li>
-							<li class="flex items-center gap-3">
-								<svg class="w-5 h-5 text-brand-gold shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-								<span>Summer canopy with patio heaters for year-round comfort.</span>
-							</li>
-						</ul>
+			<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-center">
+				<div class="order-2 lg:order-1">
+					<span class="text-brand-gold uppercase tracking-widest text-[10px] font-bold">Venue Hire</span>
+					<h2 class="font-serif text-3xl md:text-5xl text-brand-green mt-2 mb-6 leading-tight italic italic italic">Celebrate at Billingbear</h2>
+					<p class="text-brand-dark/70 text-base md:text-lg font-light leading-relaxed mb-6">
+						Billingbear Park is a fantastic venue for private functions. With no neighbours, you’re able to turn up the music and enjoy an evening with friends and family in beautiful private surroundings.
+					</p>
+					
+					<ul class="space-y-4 mb-8 text-[11px] md:text-sm text-brand-dark/80">
+						<li class="flex items-center gap-3">
+							<svg class="w-5 h-5 text-brand-gold shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+							<span>Capacity for up to <strong>120 guests</strong> (Clubhouse + Marquee).</span>
+						</li>
+						<li class="flex items-center gap-3">
+							<svg class="w-5 h-5 text-brand-gold shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+							<span>Summer canopy with patio heaters for year-round comfort.</span>
+						</li>
+					</ul>
 
-						<div class="bg-white border-l-4 border-brand-green p-6 shadow-sm mb-8 hover:shadow-lg transition-shadow duration-300">
-							<h4 class="font-serif text-lg md:text-xl text-brand-green mb-2 italic">Golf-Themed Buffets & BBQs</h4>
-							<p class="text-xs md:text-sm text-brand-dark/70 mb-3 italic">Nuestras opciones de catering incluyen menús temáticos:</p>
-							<div class="flex flex-wrap gap-2">
-								<span class="bg-brand-stone/50 px-3 py-1 text-[9px] uppercase tracking-tighter rounded-full font-bold hover:bg-brand-green hover:text-white transition-colors cursor-default">The Palmer</span>
-								<span class="bg-brand-stone/50 px-3 py-1 text-[9px] uppercase tracking-tighter rounded-full font-bold hover:bg-brand-green hover:text-white transition-colors cursor-default">The Nicklaus</span>
-								<span class="bg-brand-stone/50 px-3 py-1 text-[9px] uppercase tracking-tighter rounded-full font-bold hover:bg-brand-green hover:text-white transition-colors cursor-default">The Faldo Hog Roast</span>
-							</div>
-						</div>
-
-						<div class="flex items-center gap-6">
-							<span class="text-brand-green text-lg font-bold">Hire from £600</span>
-							<a href="mailto:info@billingbearpark.com" class="bg-brand-green text-white px-8 py-3 text-[10px] uppercase tracking-widest font-bold hover:bg-brand-gold transition-all duration-300 hover:-translate-y-1 hover:shadow-lg leading-none">Enquire Now &rarr;</a>
+					<div class="bg-white border-l-4 border-brand-green p-6 shadow-sm mb-8 hover:shadow-lg transition-shadow duration-300">
+						<h4 class="font-serif text-lg md:text-xl text-brand-green mb-2 italic">Golf-Themed Buffets & BBQs</h4>
+						<p class="text-xs md:text-sm text-brand-dark/70 mb-3 italic">Nuestras opciones de catering incluyen menús temáticos:</p>
+						<div class="flex flex-wrap gap-2">
+							<span class="bg-brand-stone/50 px-3 py-1 text-[9px] uppercase tracking-tighter rounded-full font-bold hover:bg-brand-green hover:text-white transition-colors cursor-default leading-none">The Palmer</span>
+							<span class="bg-brand-stone/50 px-3 py-1 text-[9px] uppercase tracking-tighter rounded-full font-bold hover:bg-brand-green hover:text-white transition-colors cursor-default leading-none">The Nicklaus</span>
+							<span class="bg-brand-stone/50 px-3 py-1 text-[9px] uppercase tracking-tighter rounded-full font-bold hover:bg-brand-green hover:text-white transition-colors cursor-default leading-none">The Faldo Hog Roast</span>
 						</div>
 					</div>
 
-					<div class="order-1 lg:order-2 relative group">
-						<div class="overflow-hidden rounded-sm shadow-2xl aspect-[4/5] relative">
-							<img src={eventsImage} alt="Events at Billingbear" class="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105" />
-							<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-6 md:p-8 pt-24 text-white">
-								<div class="font-serif italic text-base md:text-lg leading-relaxed opacity-90 mb-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-									“Please accept our sincere thanks for helping to make our 50th wedding anniversary a resounding success.”
-								</div>
-								<div class="text-[10px] font-bold uppercase tracking-widest text-brand-gold">— Rosalind and Ted</div>
-							</div>
-						</div>
-						<div class="absolute -z-10 top-10 -right-10 w-full h-full border-2 border-brand-gold/30 rounded-sm group-hover:translate-x-2 group-hover:translate-y-2 transition-transform duration-500 hidden md:block"></div>
+					<div class="flex items-center gap-6">
+						<span class="text-brand-green text-lg font-bold leading-none">Hire from £600</span>
+						<a href="mailto:info@billingbearpark.com" class="bg-brand-green text-white px-8 py-4 text-[10px] uppercase tracking-widest font-bold hover:bg-brand-gold transition-all duration-300 hover:-translate-y-1 hover:shadow-lg leading-none">Enquire Now &rarr;</a>
 					</div>
+				</div>
+
+				<div class="order-1 lg:order-2 relative group">
+					<div class="overflow-hidden rounded-sm shadow-2xl aspect-[4/5] relative">
+						<img src={eventsImage} alt="Events at Billingbear" class="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105" />
+						<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-6 md:p-8 pt-24 text-white">
+							<div class="font-serif italic text-base md:text-lg leading-relaxed opacity-90 mb-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+								“Please accept our sincere thanks for helping to make our 50th wedding anniversary a resounding success.”
+							</div>
+							<div class="text-[10px] font-bold uppercase tracking-widest text-brand-gold leading-none">— Rosalind and Ted</div>
+						</div>
+					</div>
+					<div class="absolute -z-10 top-10 -right-10 w-full h-full border-2 border-brand-gold/30 rounded-sm group-hover:translate-x-2 group-hover:translate-y-2 transition-transform duration-500 hidden md:block"></div>
 				</div>
 			</div>
 		</section>
@@ -479,9 +483,9 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 					<div class="space-y-4">
 						<h5 class="text-brand-gold uppercase tracking-widest text-[9px] font-bold mb-6 opacity-60">Navigate</h5>
 						<ul class="space-y-3 text-xs text-white/60 font-light">
-							<li><button class="booking-trigger hover:text-brand-gold transition-colors duration-300 text-left cursor-pointer">Book Tee Time</button></li>
+							<li><button class="booking-trigger hover:text-brand-gold transition-colors duration-300 text-left cursor-pointer leading-none">Book Tee Time</button></li>
 							<li><a href="#vouchers" class="hover:text-brand-gold transition-colors duration-300">Gift Vouchers</a></li>
-							<li><button class="shuffle-trigger hover:text-brand-gold transition-colors duration-300 text-left cursor-pointer">Shuffleboard</button></li>
+							<li><button class="shuffle-trigger hover:text-brand-gold transition-colors duration-300 text-left cursor-pointer leading-none">Shuffleboard</button></li>
 							<li><a href="#events" class="hover:text-brand-gold transition-colors duration-300">Events & Weddings</a></li>
 						</ul>
 					</div>
@@ -503,22 +507,22 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 		</footer>
 	</main>
 
-	<!-- COURSE SELECTION MODAL -->
+	<!-- MODAL: COURSE SELECTION -->
 	<div id="booking-modal" class="modal-container fixed inset-0 z-[130] hidden items-center justify-center bg-black/90 backdrop-blur-md p-4 transition-all duration-300 overflow-y-auto">
 		<div class="modal-content relative w-full max-w-4xl bg-brand-cream rounded-sm shadow-2xl overflow-hidden">
 			<button class="close-modal absolute top-4 right-4 z-10 p-2 text-brand-green hover:text-brand-gold transition-colors bg-white/50 rounded-full md:bg-transparent">
 				<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
 			</button>
 			<div class="text-center pt-10 pb-6 px-6">
-				<span class="text-brand-gold uppercase tracking-widest text-[10px] font-bold">Book Online</span>
-				<h2 class="font-serif text-2xl md:text-4xl text-brand-green mt-2 leading-tight italic">Select Your Course</h2>
+				<span class="text-brand-gold uppercase tracking-widest text-[10px] font-bold leading-none">Book Online</span>
+				<h2 class="font-serif text-2xl md:text-4xl text-brand-green mt-2 leading-tight italic italic">Select Your Course</h2>
 			</div>
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-1 p-1 md:p-6 md:gap-6 bg-brand-stone/30">
 				<a href={brsOldCourse} target="_blank" rel="noopener noreferrer" class="group relative aspect-video md:aspect-[4/3] overflow-hidden rounded-sm cursor-pointer block">
 					<img src="https://images.pexels.com/photos/1325681/pexels-photo-1325681.jpeg?auto=compress&cs=tinysrgb&w=800" class="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110 grayscale group-hover:grayscale-0" alt="Old Course" />
 					<div class="absolute inset-0 bg-brand-green/40 group-hover:bg-brand-green/20 transition-colors duration-500"></div>
 					<div class="absolute inset-0 flex flex-col items-center justify-center text-white p-4 text-center">
-						<span class="bg-brand-gold text-brand-green text-[9px] font-bold px-3 py-1 uppercase tracking-widest mb-3">18 Holes</span>
+						<span class="bg-brand-gold text-brand-green text-[9px] font-bold px-3 py-1 uppercase tracking-widest mb-3 leading-none">18 Holes</span>
 						<h3 class="font-serif text-2xl md:text-4xl mb-4 md:mb-6 italic">The Old Course</h3>
 						<span class="border border-white px-6 py-2 text-[10px] uppercase tracking-widest font-bold group-hover:bg-white group-hover:text-brand-green transition-all leading-none">Book Now</span>
 					</div>
@@ -527,7 +531,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 					<img src="https://images.pexels.com/photos/274133/pexels-photo-274133.jpeg?auto=compress&cs=tinysrgb&w=800" class="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110 grayscale group-hover:grayscale-0" alt="New Course" />
 					<div class="absolute inset-0 bg-brand-green/40 group-hover:bg-brand-green/20 transition-colors duration-500"></div>
 					<div class="absolute inset-0 flex flex-col items-center justify-center text-white p-4 text-center">
-						<span class="bg-brand-gold text-brand-green text-[9px] font-bold px-3 py-1 uppercase tracking-widest mb-3">9 Holes Par 3</span>
+						<span class="bg-brand-gold text-brand-green text-[9px] font-bold px-3 py-1 uppercase tracking-widest mb-3 leading-none">9 Holes Par 3</span>
 						<h3 class="font-serif text-2xl md:text-4xl mb-4 md:mb-6 italic">The New Course</h3>
 						<span class="border border-white px-6 py-2 text-[10px] uppercase tracking-widest font-bold group-hover:bg-white group-hover:text-brand-green transition-all leading-none">Book Now</span>
 					</div>
@@ -539,7 +543,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 		</div>
 	</div>
 
-	<!-- SHUFFLEBOARD MODAL -->
+	<!-- MODAL: SHUFFLEBOARD -->
 	<div id="shuffleboard-modal" class="modal-container fixed inset-0 z-[130] hidden items-center justify-center bg-black/90 backdrop-blur-md p-2 md:p-4 transition-all duration-300 overflow-y-auto">
 		<div class="modal-content relative w-full max-w-5xl bg-white rounded-sm shadow-2xl overflow-hidden h-[95vh] md:h-[85vh]">
 			<button class="close-modal absolute top-3 right-3 z-10 p-2 text-brand-green hover:text-brand-gold transition-colors bg-white/80 rounded-full shadow-md">
@@ -553,7 +557,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 		</div>
 	</div>
 
-	<!-- Script de Animación -->
+	<!-- SCRIPTS -->
 	<script>
 		// --- STICKY HEADER & TOP BAR ---
 		const nav = document.getElementById('main-nav');

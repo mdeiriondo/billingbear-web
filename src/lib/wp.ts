@@ -1,30 +1,36 @@
 /**
  * Cliente básico para conectar Astro con la REST API de WordPress.
- * Asegúrate de que tu LocalWP esté corriendo.
  */
 
-const WP_URL = "http://billingbear-api.local/wp-json/wp/v2"; // Ajusta a tu URL de LocalWP
+const WP_URL = "http://billingbear-api.local/wp-json/wp/v2";
 
-export async function getHoles() {
-    const res = await fetch(`${WP_URL}/holes?_embed`);
-    const holes = await res.json();
-    return holes;
+export async function getCourses() {
+  const res = await fetch(`${WP_URL}/courses?_embed&per_page=100`);
+  return await res.json();
 }
-    
+
+export async function getCourseBySlug(slug: string) {
+  const res = await fetch(`${WP_URL}/courses?slug=${slug}&_embed`);
+  const courses = await res.json();
+  return courses[0];
+}
+
+export async function getHoles(courseId?: number) {
+  // Si pasamos un ID de curso, filtramos por ese curso.
+  // En WP Headless, solemos usar un parámetro de filtro o categoría.
+  let url = `${WP_URL}/holes?_embed&per_page=100`;
+  if (courseId) url += `&course=${courseId}`;
+  const res = await fetch(url);
+  return await res.json();
+}
+
 export async function getVouchers() {
-    const res = await fetch(`${WP_URL}/vouchers?_embed`);
-    const vouchers = await res.json();
-    return vouchers;
+  const res = await fetch(`${WP_URL}/vouchers?_embed`);
+  return await res.json();
 }
 
 export async function getCourseStatus() {
-    const res = await fetch(`${WP_URL}/courses?_embed`);
-    const courses = await res.json();
-    // Retornamos el estado del primer curso encontrado (ej: Old Course)
-    return courses[0]?.acf?.course_status || "Open";
+  const res = await fetch(`${WP_URL}/courses?_embed`);
+  const courses = await res.json();
+  return courses[0]?.acf?.course_status || "Open";
 }
-
-/**
- * Nota: Si usas el plugin "ACF to REST API", los campos estarán 
- * dentro de la propiedad .acf del objeto retornado.
- */

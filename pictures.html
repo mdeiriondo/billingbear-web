@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billingbear Park - Heritage Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&display=swap');
+        
+        body { background-color: #F5F2EA; font-family: 'Lato', sans-serif; } /* Fondo Crema suave */
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        
+        .bg-racing-green { background-color: #004225; }
+        .text-racing-green { color: #004225; }
+        
+        .bg-gold { background-color: #D4AF37; }
+        .text-gold { color: #D4AF37; }
+        
+        .border-gold { border-color: #D4AF37; }
+
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #D4AF37;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="p-6 md:p-12">
+
+    <div class="max-w-7xl mx-auto">
+        <header class="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-gray-300 pb-6">
+            <div>
+                <span class="text-xs font-bold tracking-[0.2em] text-gold uppercase">Asset Generator</span>
+                <h1 class="text-4xl md:text-5xl text-racing-green mt-2 italic">Billingbear <span class="text-gold">Heritage Studio</span></h1>
+            </div>
+            <p class="text-racing-green/60 text-sm mt-4 md:mt-0 max-w-md text-right">
+                Generador de fotografía IA configurado con el estilo "Heritage Modern": paleta Verde Racing, Crema y Dorado.
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="grid">
+            <!-- Cards will be injected here -->
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="fixed inset-0 bg-racing-green/95 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white p-2 max-w-4xl w-full shadow-2xl rounded-sm">
+            <div class="relative">
+                <img id="modal-img" src="" class="w-full h-auto object-cover border border-gray-100">
+                <button onclick="closeModal()" class="absolute top-4 right-4 bg-white/80 hover:bg-white text-racing-green w-8 h-8 flex items-center justify-center rounded-full font-bold">&times;</button>
+            </div>
+            <div class="p-6 flex justify-between items-center bg-[#F5F2EA]">
+                <div>
+                    <h3 id="modal-title" class="text-racing-green text-xl italic font-serif"></h3>
+                    <p class="text-xs text-racing-green/50 uppercase tracking-widest mt-1">Heritage Modern Collection</p>
+                </div>
+                <button id="download-btn" class="bg-racing-green text-white px-8 py-3 text-xs font-bold uppercase tracking-[0.2em] hover:bg-gold transition-colors shadow-lg">
+                    Descargar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiKey = ""; // Se inyecta automáticamente
+
+        // LISTA DE PROMPTS OPTIMIZADOS "HERITAGE MODERN"
+        const vouchers = [
+            {
+                id: 1,
+                title: "2 Golfers, Buggy & Drinks",
+                desc: "Experiencia Completa",
+                prompt: "Photorealistic wide shot of a premium British Racing Green golf buggy parked on a pristine fairway of an English parkland course. Two elegant golf bags strapped to the back. In the foreground, a silver tray on a wooden table with two coffees and refreshments. Golden hour lighting, ancient oak trees in background, cream and green color palette, high heritage luxury."
+            },
+            {
+                id: 2,
+                title: "1 Golfer, Old Course",
+                desc: "Ronda Individual",
+                prompt: "Cinematic shot of a single golfer walking away down a historic fairway lined with mature trees. The golfer carries a vintage leather bag. Soft morning mist, rays of sunlight filtering through leaves. A sense of solitude and tradition. Muted greens and soft golds."
+            },
+            {
+                id: 3,
+                title: "1 Golfer, New Course (9 Holes)",
+                desc: "Ronda Rápida",
+                prompt: "A beautiful Par 3 golf hole reflected in a calm water hazard. A single white ball sits on the manicured green. A refreshing drink with a lemon slice sits on a stone wall in the immediate foreground, slightly out of focus. Fresh, bright, modern heritage style."
+            },
+            {
+                id: 4,
+                title: "2 Golfers, New Course",
+                desc: "Dúo New Course",
+                prompt: "Two friends in smart golf attire laughing on a sun-drenched putting green. Casual luxury atmosphere. Vibrant green grass, blue sky. A low angle shot focusing on the camaraderie and the golf lifestyle. Cream and green tones."
+            },
+            {
+                id: 5,
+                title: "Fourball Old Course",
+                desc: "Pack Grupal (Destacado)",
+                prompt: "Epic wide shot of four golfers silhouetted against a dramatic sunset on a tee box. They are looking out over a rolling English countryside golf course. Long shadows, rich golden light, deep green turf. The epitome of a classic golf day. Editorial quality."
+            },
+            {
+                id: 6,
+                title: "18 Holes Old Course",
+                desc: "Solo Green Fee",
+                prompt: "Landscape photography of the signature hole of a Martin Hawtree designed course. A bunker with white sand in the foreground, leading the eye to a flagstick with a gold logo fluttering in the wind. Majestic trees framing the shot. Timeless elegance."
+            },
+            {
+                id: 7,
+                title: "9 Holes New Course",
+                desc: "Solo Green Fee",
+                prompt: "Close up detail of a golf ball teed up on a wooden tee. The background is a soft bokeh of a lush green fairway and a small lake. Morning dew on the grass. Crisp, clean, and inviting."
+            },
+            {
+                id: 8,
+                title: "Monetary Gift Voucher",
+                desc: "Regalo Flexible (Destacado)",
+                prompt: "Product photography of a luxurious thick cream envelope with a gold wax seal resting on a dark green velvet surface. A classic golf ball and a vintage tee nearby. Soft studio lighting highlighting the texture of the paper. 'Billingbear' implied elegance."
+            },
+            {
+                id: 9,
+                title: "45 Min Individual Lesson",
+                desc: "Clase PGA",
+                prompt: "Close up action shot of a golf professional's hands adjusting a student's grip on a golf club. Shallow depth of field. The background is a blurred driving range. Focus on technique and education. Professional, clean aesthetic."
+            },
+            {
+                id: 10,
+                title: "10 x PGA Lessons Pack",
+                desc: "Paquete Premium (Destacado)",
+                prompt: "Flat lay photography of golf coaching essentials arranged neatly on a dark mahogany table: A leather scorecard holder, a high-tech launch monitor, a glove, and a pyramid of premium balls. Sophisticated, organized, masterclass vibe."
+            },
+            {
+                id: 11,
+                title: "Wine and Golf",
+                desc: "Experiencia Social",
+                prompt: "Lifestyle photography. A glass of rich red wine placed on an outdoor clubhouse table at dusk. In the background, out of focus, the 18th green. Warm string lights bokeh. Relaxed, sophisticated, evening golf atmosphere."
+            }
+        ];
+
+        function init() {
+            const grid = document.getElementById('grid');
+            vouchers.forEach(v => {
+                const card = document.createElement('div');
+                card.className = "bg-white border border-gray-200 p-6 flex flex-col justify-between hover:border-[#D4AF37] transition-all duration-300 group shadow-sm hover:shadow-xl";
+                card.innerHTML = `
+                    <div class="mb-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">ID: ${v.id}</span>
+                            <span class="text-[10px] font-bold text-gold uppercase tracking-widest">${v.desc}</span>
+                        </div>
+                        <h3 class="text-2xl text-racing-green italic font-serif leading-tight group-hover:text-gold transition-colors">${v.title}</h3>
+                    </div>
+                    
+                    <div class="mt-auto">
+                        <div id="loading-${v.id}" class="hidden flex items-center gap-2 mb-3">
+                            <div class="loader"></div>
+                            <span class="text-xs text-gray-500 italic">Revelando imagen...</span>
+                        </div>
+                        <button onclick="generate(${v.id})" id="btn-${v.id}" class="w-full bg-[#F5F2EA] text-racing-green border border-racing-green/20 py-3 text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-racing-green hover:text-white transition-all">
+                            Generar Foto
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        async function generate(id) {
+            const v = vouchers.find(item => item.id === id);
+            const btn = document.getElementById(`btn-${id}`);
+            const loader = document.getElementById(`loading-${id}`);
+            
+            btn.classList.add('hidden');
+            loader.classList.remove('hidden');
+
+            try {
+                // Simulación de llamada segura a la API (reintentos)
+                const response = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        instances: [{ prompt: v.prompt }],
+                        parameters: { sampleCount: 1 }
+                    })
+                });
+
+                const data = await response.json();
+                if(data.predictions && data.predictions[0]) {
+                    const imgUrl = `data:image/png;base64,${data.predictions[0].bytesBase64Encoded}`;
+                    openModal(imgUrl, v.title);
+                } else {
+                    alert("El revelado falló. Por favor intenta de nuevo.");
+                }
+
+            } catch (e) {
+                console.error(e);
+                alert("Error de conexión con el estudio.");
+            } finally {
+                btn.classList.remove('hidden');
+                loader.classList.add('hidden');
+                btn.innerText = "Regenerar";
+            }
+        }
+
+        async function fetchWithRetry(url, options, retries = 3) {
+            try {
+                return await fetch(url, options);
+            } catch (err) {
+                if (retries <= 1) throw err;
+                await new Promise(r => setTimeout(r, 1000));
+                return fetchWithRetry(url, options, retries - 1);
+            }
+        }
+
+        function openModal(url, title) {
+            const modal = document.getElementById('modal');
+            document.getElementById('modal-img').src = url;
+            document.getElementById('modal-title').innerText = title;
+            modal.classList.remove('hidden');
+            
+            document.getElementById('download-btn').onclick = function() {
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `billingbear-${title.toLowerCase().replace(/[^a-z0-9]/g, '-')}.png`;
+                a.click();
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+        }
+
+        init();
+    </script>
+</body>
+</html>
