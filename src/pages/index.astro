@@ -66,17 +66,18 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 <Layout title="Billingbear Park | Pay & Play Golf in Berkshire">
 	
 	<!-- 1. TOP BAR: COURSE STATUS -->
-	<div id="top-bar" class="bg-brand-green text-white text-[10px] md:text-xs py-2 px-6 flex justify-between items-center tracking-widest uppercase border-b border-white/10 relative z-[110] transition-transform duration-500 whitespace-nowrap overflow-hidden">
-		<div class="flex gap-6 md:gap-10 items-center relative min-w-0 flex-1">
+	<div id="top-bar" class="bg-brand-green text-white text-[10px] md:text-xs py-1.5 md:py-2 px-3 md:px-6 flex justify-between items-center tracking-widest uppercase border-b border-white/10 relative z-[110] transition-transform duration-500 whitespace-nowrap overflow-hidden">
+		<div class="flex gap-2 md:gap-6 lg:gap-10 items-center relative min-w-0 flex-1">
 			
 			<!-- Old Course Reveal -->
 			<div class="course-group-old relative flex items-center cursor-default shrink-0">
-				<div class={`flex items-center gap-2 ${statusData.old.status !== 'Open' ? 'status-alert' : ''}`}>
-					<span class={`w-2 h-2 rounded-full ${statusData.old.color} animate-pulse`}></span> 
-					<span class="font-bold">{statusData.old.label}: <span class="text-brand-gold">{statusData.old.status}</span></span>
+				<div class={`flex items-center gap-1.5 md:gap-2 ${statusData.old.status !== 'Open' ? 'status-alert' : ''}`}>
+					<span class={`w-1.5 md:w-2 h-1.5 md:h-2 rounded-full ${statusData.old.color} animate-pulse shrink-0`}></span> 
+					<!-- Mobile: solo nombre. Desktop: nombre + estado -->
+					<span class="font-bold">{statusData.old.label}<span class="hidden md:inline">: <span class="text-brand-gold">{statusData.old.status}</span></span></span>
 				</div>
-				<!-- Expandible - En flujo normal para empujar al New Course -->
-				<div class="max-w-0 transition-all duration-500 ease-in-out overflow-hidden opacity-0 ml-3 whitespace-nowrap inline-block">
+				<!-- Expandible - En flujo normal para empujar al New Course (solo desktop) -->
+				<div class="max-w-0 transition-all duration-500 ease-in-out overflow-hidden opacity-0 ml-3 whitespace-nowrap inline-block hidden md:block">
 					<span class="pl-4 text-[9px] text-white/60 normal-case tracking-tight font-light border-l border-white/10 inline-block">
 						{statusData.old.details}
 					</span>
@@ -84,13 +85,14 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 			</div>
 
 			<!-- New Course Reveal -->
-			<div class="course-group-new relative flex items-center cursor-default shrink-0 border-l border-white/10 pl-6 md:pl-10">
-				<div class={`flex items-center gap-2 ${statusData.new.status !== 'Open' ? 'status-alert' : ''}`}>
-					<span class={`w-2 h-2 rounded-full ${statusData.new.color}`}></span> 
-					<span class="font-bold">{statusData.new.label}: <span class="text-brand-gold">{statusData.new.status}</span></span>
+			<div class="course-group-new relative flex items-center cursor-default shrink-0 border-l border-white/10 pl-2 md:pl-6 md:pl-10">
+				<div class={`flex items-center gap-1.5 md:gap-2 ${statusData.new.status !== 'Open' ? 'status-alert' : ''}`}>
+					<span class={`w-1.5 md:w-2 h-1.5 md:h-2 rounded-full ${statusData.new.color} shrink-0`}></span> 
+					<!-- Mobile: solo nombre. Desktop: nombre + estado -->
+					<span class="font-bold">{statusData.new.label}<span class="hidden md:inline">: <span class="text-brand-gold">{statusData.new.status}</span></span></span>
 				</div>
-				<!-- Expandible - En absoluto para no empujar los botones -->
-				<div class="absolute left-full top-0 max-w-0 transition-all duration-500 ease-in-out overflow-hidden opacity-0 ml-3 whitespace-nowrap z-10">
+				<!-- Expandible - En absoluto para no empujar los botones (solo desktop) -->
+				<div class="absolute left-full top-0 max-w-0 transition-all duration-500 ease-in-out overflow-hidden opacity-0 ml-3 whitespace-nowrap z-10 hidden md:block">
 					<span class="pl-4 text-[9px] text-white/60 normal-case tracking-tight font-light border-l border-white/10 inline-block">
 						{statusData.new.details}
 					</span>
@@ -98,7 +100,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 			</div>
 
 		</div>
-		<div class="flex items-center gap-4 lg:gap-6 shrink-0">
+		<div class="flex items-center gap-2 md:gap-4 lg:gap-6 shrink-0">
 			<span class="hidden lg:inline opacity-40 font-serif italic text-sm normal-case tracking-normal">
 				Berkshire Heritage Golf: Making Quality Golf Accessible to Everyone
 			</span>
@@ -112,7 +114,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 			
 			<!-- 2. NAVIGATION (Sticky & Transformable) -->
 			<nav id="main-nav" class="fixed top-0 w-full z-[100] px-4 md:px-6 transition-all duration-500 py-10 md:py-12 translate-y-8">
-				<div class="max-w-7xl mx-auto grid grid-cols-3 items-center relative">
+				<div class="nav-inner max-w-7xl mx-auto grid grid-cols-3 items-center relative">
 					
 					<!-- A. LOGO & STATUS CONTAINER -->
 					<div class="flex items-center gap-4 md:gap-8 shrink-0">
@@ -124,7 +126,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 							/>
 						</a>
 
-						<!-- Mini Status (Sticky Mode Only) -->
+						<!-- Mini Status (Sticky Mode Only - Desktop) -->
 						<div class="nav-status hidden opacity-0 transition-all duration-500 items-center gap-6 border-l border-white/20 pl-6 h-8 whitespace-nowrap relative min-w-0">
 							<div class="nav-course-group-old relative flex items-center">
 								<span class={`w-2 h-2 rounded-full ${statusData.old.color} shrink-0`}></span> 
@@ -132,7 +134,6 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 									<span class="text-white text-[8px] font-bold uppercase tracking-widest">{statusData.old.label}</span>
 									<span class="text-brand-gold text-[9px] font-bold uppercase">{statusData.old.status}</span>
 								</div>
-								<!-- Mini Reveal en Sticky - En flujo normal para empujar al New Course -->
 								<div class="max-w-0 transition-all duration-500 overflow-hidden opacity-0 hidden md:block ml-4 whitespace-nowrap inline-block">
 									<span class="text-[9px] text-white/40 border-l border-white/10 pl-4">{statusData.old.details}</span>
 								</div>
@@ -144,7 +145,6 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 									<span class="text-white text-[8px] font-bold uppercase tracking-widest">{statusData.new.label}</span>
 									<span class="text-brand-gold text-[9px] font-bold uppercase">{statusData.new.status}</span>
 								</div>
-								<!-- Mini Reveal en Sticky - En absoluto para no empujar los botones -->
 								<div class="absolute left-full top-0 max-w-0 transition-all duration-500 overflow-hidden opacity-0 hidden md:block ml-4 whitespace-nowrap z-10">
 									<span class="text-[9px] text-white/40 border-l border-white/10 pl-4">{statusData.new.details}</span>
 								</div>
@@ -152,7 +152,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 						</div>
 					</div>
 					
-					<!-- B. MENU LINKS - Centrado en la columna del medio -->
+					<!-- B. MENU LINKS -->
 					<div class="nav-links hidden md:flex gap-6 lg:gap-8 text-white text-sm font-medium tracking-wide shadow-black drop-shadow-md transition-all duration-500 justify-center">
 						<a href="#courses" class="hover:text-brand-gold transition-colors duration-300 whitespace-nowrap">Our Courses</a>
 						<a href="#heritage" class="hover:text-brand-gold transition-colors duration-300 whitespace-nowrap">History</a>
@@ -163,12 +163,9 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 
 					<!-- C. ACTION BUTTONS -->
 					<div class="flex items-center gap-2 md:gap-3 shrink-0 justify-end">
-						<!-- Shuffleboard Button (Sticky Mode Only) -->
 						<button class="shuffle-trigger nav-shuffle hidden opacity-0 transform translate-x-4 transition-all duration-500 bg-transparent border border-white/40 text-white px-5 md:px-7 py-2.5 md:py-3 rounded-sm text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-brand-green cursor-pointer whitespace-nowrap leading-none">
 							Shuffleboard
 						</button>
-
-						<!-- Book Tee Time (Always Visible) -->
 						<button class="booking-trigger bg-white text-brand-green px-5 md:px-7 py-2.5 md:py-3 rounded-sm text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-brand-gold transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transform cursor-pointer border border-white whitespace-nowrap leading-none">
 							Book Tee Time
 						</button>
@@ -186,10 +183,10 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 			<div class="absolute inset-0 bg-black/30"></div>
 			
 			<div class="relative z-10 max-w-5xl mx-auto px-6 text-center mt-20">
-				<h1 class="text-4xl md:text-7xl text-white font-serif font-medium leading-[1.1] mb-6 drop-shadow-xl opacity-0 translate-y-8 animate-enter" style="animation-delay: 100ms;">
-					Welcome to <span class="text-brand-gold italic">Billingbear Park</span>
+				<h1 class="hero-title text-4xl md:text-7xl text-white font-serif font-medium leading-[1.1] mb-6 drop-shadow-xl opacity-0 translate-y-8 animate-enter tracking-[0.04em] md:tracking-[0.06em]" style="animation-delay: 100ms;">
+					Welcome to <span class="text-brand-gold italic tracking-[0.08em]">Billingbear Park</span>
 				</h1>
-				<p class="text-white text-base md:text-2xl font-light max-w-3xl mx-auto leading-relaxed drop-shadow-lg opacity-0 translate-y-8 animate-enter" style="animation-delay: 300ms;">
+				<p class="hero-subtitle text-white text-base md:text-2xl font-light max-w-3xl mx-auto leading-relaxed drop-shadow-lg opacity-0 translate-y-8 animate-enter tracking-[0.02em]" style="animation-delay: 300ms;">
 					Pay and play golf in the heart of the beautiful Berkshire countryside.
 				</p>
 				
@@ -622,6 +619,24 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 		const navShuffle = document.querySelector('.nav-shuffle');
 
 		const handleScroll = () => {
+			// En mobile (< 768px): lógica específica, NO modificar desktop
+			if (window.innerWidth < 768) {
+				topBar?.classList.remove('-translate-y-full');
+				nav?.classList.remove('bg-brand-green', 'shadow-2xl', 'py-3', 'translate-y-0', 'translate-y-8', 'py-10', 'md:py-12');
+				nav?.classList.add('nav-mobile');
+				navLogo?.classList.remove('scale-75');
+				navLinks?.classList.remove('opacity-0', 'pointer-events-none', 'hidden');
+				navStatus?.classList.add('hidden', 'opacity-0');
+				navStatus?.classList.remove('flex', 'opacity-100');
+				navShuffle?.classList.add('hidden', 'opacity-0', 'translate-x-4');
+				navShuffle?.classList.remove('inline-block', 'opacity-100', 'translate-x-0');
+				nav?.classList.toggle('nav-mobile-scrolled', window.scrollY > 30);
+				return;
+			}
+
+			// DESKTOP: comportamiento original (sticky, top bar se oculta al scroll)
+			nav?.classList.remove('nav-mobile', 'nav-mobile-scrolled');
+
 			if (window.scrollY > 40) {
 				topBar?.classList.add('-translate-y-full');
 				nav?.classList.add('bg-brand-green', 'shadow-2xl', 'py-3', 'translate-y-0');
@@ -639,7 +654,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 				topBar?.classList.remove('-translate-y-full');
 				nav?.classList.remove('bg-brand-green', 'shadow-2xl', 'py-3', 'translate-y-0');
 				nav?.classList.add('py-10', 'md:py-12', 'translate-y-8');
-
+				
 				navLogo?.classList.remove('scale-75');
 				navLinks?.classList.remove('opacity-0', 'pointer-events-none', 'hidden');
 				
@@ -651,6 +666,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 			}
 		};
 		window.addEventListener('scroll', handleScroll);
+		window.addEventListener('resize', handleScroll);
 
 		// --- MODAL SYSTEM ---
 		function initModal(modalId, triggerClass) {
@@ -698,6 +714,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 
 		// --- SCROLL REVEAL ---
 		document.addEventListener('DOMContentLoaded', () => {
+			handleScroll();
 			const observer = new IntersectionObserver((entries) => {
 				entries.forEach(entry => {
 					if (entry.isIntersecting) entry.target.classList.add('active');
@@ -708,14 +725,14 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 	</script>
 
 	<style>
-		/* Animación de entrada general */
+		/* Animación de entrada general (mejorada) */
 		@keyframes fadeInUp {
-			from { opacity: 0; transform: translateY(30px); }
-			to { opacity: 1; transform: translateY(0); }
+			from { opacity: 0; transform: translateY(30px) scale(0.98); }
+			to { opacity: 1; transform: translateY(0) scale(1); }
 		}
 
 		.animate-enter {
-			animation: fadeInUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+			animation: fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 		}
 
 		/* Revelación al scroll */
@@ -834,16 +851,54 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 			animation: neonPulse 5s ease-in-out infinite;
 		}
 
-		/* Grid layout para centrar el menú perfectamente */
-		#main-nav > div {
+		/* Desktop: grid centrado (ORIGINAL) */
+		.nav-inner {
 			display: grid;
 			grid-template-columns: 1fr auto 1fr;
 			align-items: center;
 		}
 
-		/* Asegurar que el menú esté centrado en su columna */
 		#main-nav .nav-links {
 			justify-self: center;
+		}
+
+		/* ========== SOLO MOBILE (< 768px) ========== */
+		@media (max-width: 767px) {
+			/* Top bar: fixed para que no desaparezca al scroll */
+			#top-bar {
+				position: fixed !important;
+				top: 0 !important;
+				left: 0 !important;
+				right: 0 !important;
+				transform: none !important;
+			}
+
+			/* Nav: pegada al top bar, compacta, flex layout */
+			#main-nav.nav-mobile {
+				top: 0 !important;
+				padding-top: 2.5rem !important;
+				padding-bottom: 0.75rem !important;
+				transform: none !important;
+			}
+			.nav-inner {
+				display: flex !important;
+				justify-content: space-between !important;
+				grid-template-columns: none !important;
+			}
+			#main-nav .nav-status,
+			#main-nav .nav-shuffle,
+			#main-nav .nav-links {
+				display: none !important;
+				opacity: 0 !important;
+			}
+			#main-nav .nav-logo img {
+				transform: none !important;
+			}
+			#main-nav.nav-mobile-scrolled {
+				background-color: rgba(26, 60, 52, 0.97) !important;
+				backdrop-filter: blur(8px);
+				-webkit-backdrop-filter: blur(8px);
+			}
 		}
 
 		/* Estilos para el modal de Shuffleboard */

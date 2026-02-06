@@ -83,7 +83,7 @@ export default function WeatherWidget() {
 			target="_blank"
 			rel="noopener noreferrer"
 			aria-label="View full weather forecast for Billingbear Park Golf Course"
-			className="flex items-center gap-2 border-l border-white/10 pl-6 md:pl-10 shrink-0 hover:text-brand-gold transition-colors duration-300"
+			className="flex items-center gap-2 border-l border-white/10 pl-2 md:pl-6 lg:pl-10 shrink-0 hover:text-brand-gold transition-colors duration-300"
 		>
 			{isLoading && (
 				<span className="opacity-70" aria-hidden>

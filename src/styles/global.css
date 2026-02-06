@@ -6,12 +6,12 @@
   --font-sans: "Inter", sans-serif;
 
   /* Paleta de Colores Billingbear */
-  --color-brand-green: #1A3C34;
-  --color-brand-gold: #C8A97E;
-  --color-brand-cream: #F4F2ED;
-  --color-brand-dark: #1F1F1F;
-  --color-brand-stone: #E5E5E0;
-  
+  --color-brand-green: #1a3c34;
+  --color-brand-gold: #c8a97e;
+  --color-brand-cream: #f4f2ed;
+  --color-brand-dark: #1f1f1f;
+  --color-brand-stone: #e5e5e0;
+
   /* Utilidades personalizadas */
   --animate-fade-up: fadeInUp 0.8s ease-out forwards;
 }
@@ -34,5 +34,5 @@ body {
 }
 
 .hero-overlay {
-  background: linear-gradient(to top, #1A3C34 0%, transparent 80%);
+  background: linear-gradient(to top, #1a3c34 0%, transparent 80%);
 }
