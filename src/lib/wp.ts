@@ -7,8 +7,17 @@ const WP_BASE_URL = import.meta.env.WORDPRESS_URL || "https://billingbearpark.co
 const WP_URL = `${WP_BASE_URL}/wp-json/wp/v2`;
 
 export async function getCourses() {
-  const res = await fetch(`${WP_URL}/courses?_embed&per_page=100`);
-  return await res.json();
+  try {
+    const res = await fetch(`${WP_URL}/courses?_embed&per_page=100`);
+    if (!res.ok) {
+      console.error(`WordPress API error: ${res.status} ${res.statusText}`);
+      return [];
+    }
+    return await res.json();
+  } catch (error) {
+    console.error('Error fetching courses:', error);
+    return [];
+  }
 }
 
 export async function getCourseBySlug(slug: string) {
@@ -27,12 +36,30 @@ export async function getHoles(courseId?: number) {
 }
 
 export async function getVouchers() {
-  const res = await fetch(`${WP_URL}/vouchers?_embed`);
-  return await res.json();
+  try {
+    const res = await fetch(`${WP_URL}/vouchers?_embed`);
+    if (!res.ok) {
+      console.error(`WordPress API error: ${res.status} ${res.statusText}`);
+      return [];
+    }
+    return await res.json();
+  } catch (error) {
+    console.error('Error fetching vouchers:', error);
+    return [];
+  }
 }
 
 export async function getCourseStatus() {
-  const res = await fetch(`${WP_URL}/courses?_embed`);
-  const courses = await res.json();
-  return courses[0]?.acf?.course_status || "Open";
+  try {
+    const res = await fetch(`${WP_URL}/courses?_embed`);
+    if (!res.ok) {
+      console.error(`WordPress API error: ${res.status} ${res.statusText}`);
+      return "Open";
+    }
+    const courses = await res.json();
+    return courses[0]?.acf?.course_status || "Open";
+  } catch (error) {
+    console.error('Error fetching course status:', error);
+    return "Open";
+  }
 }

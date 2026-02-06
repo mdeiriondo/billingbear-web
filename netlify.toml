@@ -5,8 +5,5 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# Configuración para funciones serverless (SSR)
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/entry"
-  status = 200
+# El adaptador de Netlify genera automáticamente _redirects para SSR
+# Asegúrate de que el directorio publish sea "dist"
