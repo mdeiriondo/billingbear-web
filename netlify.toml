@@ -4,6 +4,7 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  NODE_ENV = "production"
 
 # El adaptador de Netlify genera automáticamente _redirects para SSR
 # Asegúrate de que el directorio publish sea "dist"

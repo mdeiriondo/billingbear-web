@@ -80,12 +80,13 @@ export const POST: APIRoute = async ({ request }) => {
       }
     );
   } catch (error) {
-    console.error('Error creating voucher order:', error);
+    const errMsg = error instanceof Error ? error.message : String(error);
+    console.error('Error creating voucher order:', errMsg, error);
     
     // Manejar errores específicos
     if (error instanceof Error) {
-      // Error de credenciales
-      if (error.message.includes('credentials') || error.message.includes('401')) {
+      // Error de credenciales (401) o mensaje que lo indique
+      if (errMsg.includes('credentials') || errMsg.includes('401') || errMsg.includes('Unauthorized')) {
         return new Response(
           JSON.stringify({ 
             error: 'WooCommerce authentication failed',

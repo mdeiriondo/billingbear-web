@@ -28,9 +28,13 @@ interface WooCommerceOrder {
  * Obtiene la configuración de WooCommerce desde variables de entorno
  */
 function getWooCommerceConfig(): WooCommerceConfig {
-  const url = import.meta.env.WOOCOMMERCE_URL || 'https://billingbearpark.com';
-  const consumerKey = import.meta.env.WOOCOMMERCE_CONSUMER_KEY || '';
-  const consumerSecret = import.meta.env.WOOCOMMERCE_CONSUMER_SECRET || '';
+  let url = (import.meta.env.WOOCOMMERCE_URL || 'https://billingbearpark.com').trim();
+  // Asegurar que la URL de producción use HTTPS (evita 401/500 por redirección)
+  if (url.startsWith('http://') && url.includes('billingbearpark.com')) {
+    url = url.replace('http://', 'https://');
+  }
+  const consumerKey = (import.meta.env.WOOCOMMERCE_CONSUMER_KEY || '').trim();
+  const consumerSecret = (import.meta.env.WOOCOMMERCE_CONSUMER_SECRET || '').trim();
 
   if (!consumerKey || !consumerSecret) {
     throw new Error('WooCommerce credentials not configured. Please set WOOCOMMERCE_CONSUMER_KEY and WOOCOMMERCE_CONSUMER_SECRET environment variables.');
@@ -96,8 +100,11 @@ export async function createVoucherOrder(params: CreateOrderParams): Promise<{ o
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
-      throw new Error(`WooCommerce API error: ${errorData.message || response.statusText} (${response.status})`);
+      const errorData = await response.json().catch(() => ({}));
+      const msg = errorData.message || errorData.message_detail || response.statusText;
+      // Log en servidor para depurar (sin credenciales)
+      console.error('[WooCommerce] create order failed:', response.status, config.url, msg);
+      throw new Error(`WooCommerce API error: ${msg} (${response.status})`);
     }
 
     const order: WooCommerceOrder = await response.json();

@@ -1,23 +1,32 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getCourses, getHoles } from '../../lib/wp';
+import { getCourses, getCourseBySlug, getHoles } from '../../lib/wp';
 
 // 1. Dynamic Route Generation
 export async function getStaticPaths() {
   const courses = await getCourses();
-  
   return courses.map((course: any) => ({
     params: { slug: course.slug },
     props: { course },
   }));
 }
 
-const { course } = Astro.props;
+const { course: courseFromProps } = Astro.props;
+const slug = Astro.params.slug;
+
+// En dev (Node adapter) la ruta puede servirse on-demand sin props: obtener curso por slug
+let course = courseFromProps;
+if (!course && slug) {
+  course = await getCourseBySlug(slug);
+}
+if (!course) {
+  return Astro.redirect('/404');
+}
 
 // 2. Fetch and Sort Holes
 const allHoles = await getHoles();
-const holes = allHoles
-  .filter((h: any) => h.acf?.parent_course === course.id || true) 
+const holes = (Array.isArray(allHoles) ? allHoles : [])
+  .filter((h: any) => h.acf?.parent_course === course.id)
   .sort((a: any, b: any) => (a.acf?.hole_number || 0) - (b.acf?.hole_number || 0));
 
 // Assets & Data
