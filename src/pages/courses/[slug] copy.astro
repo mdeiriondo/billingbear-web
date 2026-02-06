@@ -1,0 +1,173 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCourses, getHoles } from '../../lib/wp';
+
+// 1. Esta función es OBLIGATORIA para rutas dinámicas en modo estático.
+// Le dice a Astro: "Busca en WP todos los campos y crea una página para cada slug".
+export async function getStaticPaths() {
+  const courses = await getCourses();
+  
+  return courses.map((course: any) => ({
+    params: { slug: course.slug },
+    props: { course }, // Pasamos el objeto course completo como prop para no volver a pedirlo
+  }));
+}
+
+// 2. Recuperamos los datos de las props y los parámetros
+const { course } = Astro.props;
+const { slug } = Astro.params;
+
+if (!course) {
+  return Astro.redirect('/404');
+}
+
+// 3. Obtener los hoyos
+const allHoles = await getHoles();
+// Ordenamos los hoyos por el campo ACF "hole_number"
+// Filtramos para que solo aparezcan los de este curso (usando el ID del curso de WP)
+const holes = allHoles
+  .filter((h: any) => h.acf?.parent_course === course.id || true) 
+  .sort((a: any, b: any) => (a.acf?.hole_number || 0) - (b.acf?.hole_number || 0));
+
+// Assets
+const featuredImage = course._embedded?.['wp:featuredmedia']?.[0]?.source_url || "https://images.pexels.com/photos/1325681/pexels-photo-1325681.jpeg";
+---
+
+<Layout title={`${course.title.rendered} | Billingbear Park`}>
+    
+    <!-- HEADER MINIMALISTA -->
+    <nav class="absolute w-full z-50 px-6 py-6 flex justify-between items-center border-b border-white/10">
+        <a href="/" class="text-white font-serif text-xl md:text-2xl font-semibold tracking-tight leading-none group">
+            <span class="group-hover:text-brand-gold transition-colors italic">Billingbear</span> Park
+        </a>
+        <a href="/" class="text-white text-[10px] uppercase font-bold tracking-widest border border-white/20 px-4 py-2 hover:bg-white hover:text-brand-green transition-all leading-none">
+            Back Home
+        </a>
+    </nav>
+
+    <main>
+        <!-- HERO DEL CAMPO -->
+        <header class="relative h-[60vh] flex items-center justify-center overflow-hidden">
+            <img src={featuredImage} class="absolute inset-0 w-full h-full object-cover" alt={course.title.rendered} />
+            <div class="absolute inset-0 bg-brand-green/40 mix-blend-multiply"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-cream via-transparent to-black/20"></div>
+            
+            <div class="relative z-10 text-center px-6 mt-12">
+                <span class="text-brand-gold uppercase tracking-[0.3em] text-[10px] md:text-xs font-bold mb-4 block animate-enter">Heritage Architecture</span>
+                <h1 class="text-5xl md:text-8xl text-white font-serif italic drop-shadow-2xl animate-enter" style="animation-delay: 200ms;">
+                    {course.title.rendered}
+                </h1>
+            </div>
+        </header>
+
+        <!-- FICHA TÉCNICA (STATS) -->
+        <section class="relative z-20 -mt-12 max-w-5xl mx-auto px-6">
+            <div class="bg-white shadow-2xl rounded-sm grid grid-cols-2 md:grid-cols-4 divide-x divide-brand-stone border border-brand-stone">
+                <div class="p-6 text-center">
+                    <span class="block text-[10px] uppercase tracking-widest text-brand-gold font-bold mb-1">Par</span>
+                    <span class="text-2xl font-serif text-brand-green italic">{course.acf?.total_par || '72'}</span>
+                </div>
+                <div class="p-6 text-center">
+                    <span class="block text-[10px] uppercase tracking-widest text-brand-gold font-bold mb-1">Yards</span>
+                    <span class="text-2xl font-serif text-brand-green italic">{course.acf?.total_yards || '6,100'}</span>
+                </div>
+                <div class="p-6 text-center">
+                    <span class="block text-[10px] uppercase tracking-widest text-brand-gold font-bold mb-1">Status</span>
+                    <span class="text-sm font-bold text-green-600 uppercase tracking-tight flex items-center justify-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Open
+                    </span>
+                </div>
+                <div class="p-6 text-center">
+                    <button class="booking-trigger text-[10px] font-bold uppercase tracking-widest text-brand-green border-b border-brand-gold pb-1 hover:text-brand-gold transition-colors leading-none">
+                        Book Now
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- DESCRIPCIÓN -->
+        <section class="py-20 px-6 max-w-4xl mx-auto text-center reveal">
+            <h2 class="font-serif text-3xl text-brand-green italic mb-8">The Martin Hawtree Legacy</h2>
+            <div class="prose prose-brand-green font-light text-brand-dark/80 max-w-none leading-relaxed text-lg" set:html={course.content.rendered}></div>
+        </section>
+
+        <!-- GRID DE HOYOS -->
+        <section class="py-12 bg-white border-t border-brand-stone">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="flex justify-between items-end mb-12">
+                    <h3 class="font-serif text-3xl text-brand-green italic">Hole by Hole Guide</h3>
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-brand-dark/40 italic">Scroll to explore &darr;</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {holes.map((hole: any) => (
+                        <div class="group bg-brand-cream border border-brand-stone p-1 rounded-sm transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 reveal">
+                            <div class="aspect-video overflow-hidden relative">
+                                <img 
+                                    src={hole._embedded?.['wp:featuredmedia']?.[0]?.source_url || "https://images.pexels.com/photos/274133/pexels-photo-274133.jpeg"} 
+                                    class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                                    alt={`Hole ${hole.acf?.hole_number}`}
+                                />
+                                <div class="absolute top-4 left-4 bg-brand-green text-white w-10 h-10 flex items-center justify-center font-serif italic text-xl shadow-lg">
+                                    {hole.acf?.hole_number}
+                                </div>
+                            </div>
+                            
+                            <div class="p-6">
+                                <div class="flex justify-between items-baseline border-b border-brand-stone pb-4 mb-4">
+                                    <div class="flex flex-col">
+                                        <span class="text-[9px] uppercase tracking-[0.2em] font-bold text-brand-gold leading-none mb-1">Par</span>
+                                        <span class="text-xl font-serif text-brand-green italic leading-none">{hole.acf?.par}</span>
+                                    </div>
+                                    <div class="flex flex-col text-center">
+                                        <span class="text-[9px] uppercase tracking-[0.2em] font-bold text-brand-gold leading-none mb-1">Index</span>
+                                        <span class="text-xl font-serif text-brand-green italic leading-none">{hole.acf?.stroke_index}</span>
+                                    </div>
+                                    <div class="flex flex-col text-right">
+                                        <span class="text-[9px] uppercase tracking-[0.2em] font-bold text-brand-gold leading-none mb-1">Yards</span>
+                                        <span class="text-xl font-serif text-brand-green italic leading-none">{hole.acf?.yards_white}</span>
+                                    </div>
+                                </div>
+
+                                <div class="relative overflow-hidden">
+                                    <h4 class="text-[10px] uppercase tracking-widest font-bold text-brand-green mb-2 flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+                                        Pro Tip
+                                    </h4>
+                                    <p class="text-xs font-light italic leading-relaxed text-brand-dark/70 line-clamp-3 group-hover:line-clamp-none transition-all duration-500">
+                                        {hole.acf?.pro_tip}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+
+        <section class="py-24 bg-brand-green text-center reveal">
+            <h2 class="font-serif text-4xl text-white italic mb-8">Ready to play?</h2>
+            <button class="booking-trigger bg-brand-gold text-brand-green px-12 py-4 text-xs font-bold uppercase tracking-[0.2em] hover:bg-white transition-all shadow-2xl leading-none">
+                Reserve Your Tee Time
+            </button>
+        </section>
+    </main>
+
+    <footer class="bg-brand-dark py-12 px-6 text-center border-t border-white/5">
+        <p class="text-[10px] uppercase tracking-[0.3em] text-white/20">© {new Date().getFullYear()} Billingbear Park Golf Course</p>
+    </footer>
+
+    <script>
+        const obs = new IntersectionObserver((es) => { 
+            es.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); }); 
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    </script>
+
+    <style>
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 1s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-enter { animation: fadeInUp 0.8s ease-out forwards; }
+    </style>
+</Layout>

@@ -1,0 +1,203 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Assets
+const logoUrl = "https://billingbearpark.com/wp-content/uploads/2020/10/cropped-treat2-2.png";
+const eventsHero = "https://images.pexels.com/photos/50675/banquet-wedding-society-deco-50675.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+const marqueeImage = "https://images.pexels.com/photos/2306281/pexels-photo-2306281.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+const cateringImage = "https://images.pexels.com/photos/5929/food-salad-dinner-eating.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+---
+
+<Layout title="Events & Weddings | Billingbear Park">
+    
+    <!-- CONSISTENT GLOBAL HEADER -->
+    <nav class="bg-brand-green text-white py-4 px-6 sticky top-0 z-[100] shadow-xl border-b border-white/5">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="/" class="flex items-center gap-4 group">
+                <img src={logoUrl} alt="Billingbear Logo" class="h-8 md:h-10 w-auto brightness-0 invert" />
+                <div class="hidden md:block border-l border-white/20 pl-4">
+                    <span class="font-serif italic text-lg leading-none block">Events</span>
+                </div>
+            </a>
+            
+            <div class="flex items-center gap-6 md:gap-10">
+                <div class="hidden lg:flex gap-6 text-[10px] uppercase font-bold tracking-widest text-white/70">
+                    <a href="/courses/old-course" class="hover:text-brand-gold transition-colors">Old Course</a>
+                    <a href="/vouchers" class="hover:text-brand-gold transition-colors">Gift Vouchers</a>
+                    <a href="/history" class="hover:text-brand-gold transition-colors">History</a>
+                </div>
+                <a href="/" class="text-[9px] md:text-[10px] uppercase font-bold tracking-widest bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2 transition-all leading-none">
+                    &larr; Back Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="bg-brand-cream">
+        <!-- HERO SECTION -->
+        <header class="relative h-[70vh] flex items-center justify-center overflow-hidden">
+            <img src={eventsHero} class="absolute inset-0 w-full h-full object-cover" alt="Wedding Banquet at Billingbear" />
+            <div class="absolute inset-0 bg-brand-green/40 mix-blend-multiply"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-cream via-transparent to-black/50"></div>
+            
+            <div class="relative z-10 text-center px-6 reveal">
+                <span class="text-brand-gold uppercase tracking-[0.5em] text-[10px] md:text-xs font-bold mb-4 block">Private Hire</span>
+                <h1 class="text-6xl md:text-9xl text-white font-serif italic drop-shadow-2xl leading-none">
+                    Celebrations
+                </h1>
+                <p class="text-white/80 text-lg md:text-xl font-light mt-8 max-w-2xl mx-auto italic">
+                    "An idyllic setting for life's most memorable moments, surrounded by the heritage of Berkshire."
+                </p>
+            </div>
+        </header>
+
+        <!-- INTRODUCTION -->
+        <section class="py-24 px-6 max-w-5xl mx-auto text-center reveal">
+            <div class="w-16 h-px bg-brand-gold mx-auto mb-10"></div>
+            <h2 class="font-serif text-3xl md:text-5xl text-brand-green mb-8 italic">Exclusively Yours</h2>
+            <p class="text-brand-dark/70 text-lg md:text-xl font-light leading-relaxed mb-12">
+                With no immediate neighbours and over 120 acres of private parkland, Billingbear Park offers a rare sense of seclusion. Whether you are planning an intimate wedding breakfast or a lively milestone celebration, our clubhouse and marquee provide a versatile canvas for your vision.
+            </p>
+        </section>
+
+        <!-- WEDDINGS SECTION -->
+        <section class="py-24 px-6 bg-white border-y border-brand-stone scroll-mt-20">
+            <div class="max-w-7xl mx-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center mb-24 reveal">
+                    <div>
+                        <span class="text-brand-gold uppercase tracking-widest text-[10px] font-bold mb-4 block">Bespoke Weddings</span>
+                        <h3 class="font-serif text-4xl text-brand-green mb-6 italic">The Perfect Backdrop</h3>
+                        <p class="text-brand-dark/70 font-light leading-relaxed text-lg mb-6">
+                            From the ancient oaks that frame our fairways to the sunset over the 18th lake, the photographic opportunities at Billingbear are endless.
+                        </p>
+                        <ul class="space-y-4 text-brand-dark/80 font-light text-sm italic">
+                            <li class="flex items-center gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-gold"></span>
+                                Capacity for up to 120 guests
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-gold"></span>
+                                Fully licensed bar and late-night license
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-gold"></span>
+                                Summer canopy with patio heaters
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="relative group">
+                        <div class="absolute -inset-4 border border-brand-gold/20 -rotate-2 group-hover:rotate-0 transition-transform duration-700"></div>
+                        <img src={marqueeImage} class="relative z-10 w-full aspect-[4/5] object-cover shadow-2xl" alt="Marquee Setup" />
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CATERING PACKAGES (ACF Mapped) -->
+        <section class="py-24 px-6 bg-brand-cream">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16 reveal">
+                    <h3 class="font-serif text-4xl text-brand-green italic mb-4">Catering & Menus</h3>
+                    <p class="text-brand-dark/40 uppercase tracking-widest text-[10px] font-bold">Curated by our Kitchen Team</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 reveal">
+                    <!-- The Palmer -->
+                    <div class="bg-white p-10 border border-brand-stone flex flex-col hover:shadow-2xl transition-all duration-500 group">
+                        <span class="text-brand-gold font-serif italic text-2xl mb-4">The Palmer</span>
+                        <h4 class="text-brand-green uppercase tracking-widest text-[10px] font-bold mb-6">Classic Cold Buffet</h4>
+                        <p class="text-brand-dark/60 font-light text-sm leading-relaxed mb-8 flex-grow italic">
+                            A selection of artisanal sandwiches, homemade quiches, and seasonal salads. Perfect for light afternoon receptions.
+                        </p>
+                        <span class="text-brand-green font-serif text-xl border-t border-brand-stone pt-6">From £18.50 pp</span>
+                    </div>
+
+                    <!-- The Nicklaus -->
+                    <div class="bg-brand-green p-10 flex flex-col shadow-xl transform md:-translate-y-4 group">
+                        <span class="text-brand-gold font-serif italic text-2xl mb-4">The Nicklaus</span>
+                        <h4 class="text-white uppercase tracking-widest text-[10px] font-bold mb-6">Hot Fork Buffet</h4>
+                        <p class="text-white/70 font-light text-sm leading-relaxed mb-8 flex-grow italic">
+                            Rich beef stroganoff, Thai green curry, and roasted Mediterranean vegetables. Hearty and sophisticated.
+                        </p>
+                        <span class="text-brand-gold font-serif text-xl border-t border-white/10 pt-6">From £24.50 pp</span>
+                    </div>
+
+                    <!-- The Faldo -->
+                    <div class="bg-white p-10 border border-brand-stone flex flex-col hover:shadow-2xl transition-all duration-500 group">
+                        <span class="text-brand-gold font-serif italic text-2xl mb-4">The Faldo</span>
+                        <h4 class="text-brand-green uppercase tracking-widest text-[10px] font-bold mb-6">Hog Roast Experience</h4>
+                        <p class="text-brand-dark/60 font-light text-sm leading-relaxed mb-8 flex-grow italic">
+                            Our signature slow-roasted local pork with crackling, apple sauce, and brioche rolls. The ultimate crowd-pleaser.
+                        </p>
+                        <span class="text-brand-green font-serif text-xl border-t border-brand-stone pt-6">From £22.00 pp</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ENQUIRY FORM -->
+        <section class="py-32 px-6 bg-brand-dark relative overflow-hidden reveal">
+            <div class="absolute inset-0 opacity-10 flex items-center justify-center">
+                <img src={logoUrl} class="w-1/2 brightness-0 invert" />
+            </div>
+            
+            <div class="max-w-3xl mx-auto relative z-10">
+                <div class="text-center mb-16">
+                    <h2 class="font-serif text-4xl md:text-6xl text-white italic mb-6">Start Planning</h2>
+                    <p class="text-white/40 text-lg font-light italic">Let us help you create an event as unique as the landscape itself.</p>
+                </div>
+
+                <form class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-[10px] uppercase tracking-widest text-brand-gold font-bold">Full Name</label>
+                            <input type="text" class="w-full bg-white/5 border border-white/10 p-4 text-white focus:outline-none focus:border-brand-gold transition-colors" />
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] uppercase tracking-widest text-brand-gold font-bold">Email Address</label>
+                            <input type="email" class="w-full bg-white/5 border border-white/10 p-4 text-white focus:outline-none focus:border-brand-gold transition-colors" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-[10px] uppercase tracking-widest text-brand-gold font-bold">Event Type</label>
+                            <select class="w-full bg-white/5 border border-white/10 p-4 text-white/50 focus:outline-none focus:border-brand-gold transition-colors appearance-none">
+                                <option>Wedding</option>
+                                <option>Private Party</option>
+                                <option>Corporate Event</option>
+                                <option>Society Golf Day</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] uppercase tracking-widest text-brand-gold font-bold">Estimated Guests</label>
+                            <input type="number" class="w-full bg-white/5 border border-white/10 p-4 text-white focus:outline-none focus:border-brand-gold transition-colors" />
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] uppercase tracking-widest text-brand-gold font-bold">Your Message</label>
+                        <textarea rows="4" class="w-full bg-white/5 border border-white/10 p-4 text-white focus:outline-none focus:border-brand-gold transition-colors"></textarea>
+                    </div>
+                    <button class="w-full bg-brand-gold text-brand-green py-5 text-xs font-bold uppercase tracking-[0.3em] hover:bg-white transition-all shadow-2xl leading-none">
+                        Send Enquiry &rarr;
+                    </button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-brand-dark py-12 px-6 text-center border-t border-white/5">
+        <p class="text-[10px] uppercase tracking-[0.3em] text-white/20">© {new Date().getFullYear()} Billingbear Park • Berkshire Heritage Golf</p>
+    </footer>
+
+    <script>
+        const obs = new IntersectionObserver((es) => { 
+            es.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); }); 
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    </script>
+
+    <style>
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 1s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+    </style>
+</Layout>

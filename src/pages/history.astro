@@ -1,0 +1,165 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Assets
+const logoUrl = "https://billingbearpark.com/wp-content/uploads/2020/10/cropped-treat2-2.png";
+const historyHero = "https://images.pexels.com/photos/1632790/pexels-photo-1632790.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+const billingbearHouseOld = "https://i.postimg.cc/9XRfbQbx/image3.png";
+
+// Domesday Book Custom Image (Generated for historical accuracy)
+const domesdayImage = "https://i.postimg.cc/8CmpFF1Q/image.png"; 
+---
+
+<Layout title="History & Heritage | Billingbear Park">
+    
+    <!-- HEADER GLOBAL CONSISTENTE (Internal) -->
+    <nav class="bg-brand-green text-white py-4 px-6 sticky top-0 z-[100] shadow-xl border-b border-white/5">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="/" class="flex items-center gap-4 group">
+                <img src={logoUrl} alt="Billingbear Logo" class="h-8 md:h-10 w-auto brightness-0 invert" />
+                <div class="hidden md:block border-l border-white/20 pl-4">
+                    <span class="font-serif italic text-lg leading-none block">Heritage</span>
+                </div>
+            </a>
+            
+            <div class="flex items-center gap-6 md:gap-10">
+                <div class="hidden lg:flex gap-6 text-[10px] uppercase font-bold tracking-widest text-white/70">
+                    <a href="/courses/old-course" class="hover:text-brand-gold transition-colors">Old Course</a>
+                    <a href="/vouchers" class="hover:text-brand-gold transition-colors">Gift Vouchers</a>
+                </div>
+                <a href="/" class="text-[9px] md:text-[10px] uppercase font-bold tracking-widest bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2 transition-all leading-none">
+                    &larr; Back Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="bg-brand-cream">
+        <!-- HERO SECTION -->
+        <header class="relative h-[80vh] flex items-center justify-center overflow-hidden">
+            <img src={historyHero} class="absolute inset-0 w-full h-full object-cover" alt="Historic Billingbear Landscape" />
+            <div class="absolute inset-0 bg-brand-green/40 mix-blend-multiply"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-cream via-transparent to-black/50"></div>
+            
+            <div class="relative z-10 text-center px-6 reveal">
+                <span class="text-brand-gold uppercase tracking-[0.5em] text-[10px] md:text-xs font-bold mb-4 block">A Royal Landscape</span>
+                <h1 class="text-6xl md:text-9xl text-white font-serif italic drop-shadow-2xl leading-none">
+                    Heritage
+                </h1>
+                <p class="text-white/80 text-lg md:text-2xl font-light mt-8 max-w-2xl mx-auto italic">
+                    "A journey through a thousand years of British history, carved into the Berkshire countryside."
+                </p>
+            </div>
+        </header>
+
+        <!-- INTRODUCTION -->
+        <section class="py-24 px-6 max-w-4xl mx-auto text-center reveal">
+            <div class="w-16 h-px bg-brand-gold mx-auto mb-10"></div>
+            <h2 class="font-serif text-3xl md:text-5xl text-brand-green mb-8 italic">Ancient Roots</h2>
+            <p class="text-brand-dark/70 text-lg md:text-xl font-light leading-relaxed mb-12">
+                Billingbear Park is not just a golf course; it is a sacred landscape. From royal hunting grounds to the seat of the powerful Neville family, every fairway tells a story of royalty, literature, and architectural evolution.
+            </p>
+        </section>
+
+        <!-- TIMELINE SECTION -->
+        <section class="py-24 px-6 bg-white border-y border-brand-stone relative">
+            <div class="max-w-7xl mx-auto">
+                
+                <!-- 1086: Domesday -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-32 reveal">
+                    <div class="order-2 lg:order-1">
+                        <span class="text-brand-gold font-serif italic text-4xl block mb-4">1086</span>
+                        <h3 class="font-serif text-3xl text-brand-green mb-6 italic">The Domesday Book</h3>
+                        <p class="text-brand-dark/70 font-light leading-relaxed text-lg">
+                            The history of Billingbear begins with the <strong>Domesday Book</strong>. Mentioned as part of the royal lands of King William the Conqueror, the park served as a significant portion of the Windsor forest, used for royal recreation and forestry for centuries.
+                        </p>
+                    </div>
+                    <div class="order-1 lg:order-2">
+                        <div class="aspect-square bg-brand-cream p-1 rounded-sm shadow-xl overflow-hidden group">
+                            <img src={domesdayImage} class="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105" alt="Medieval Parchment Representation" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1567: Billingbear House -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-32 reveal">
+                    <div class="relative group">
+                        <div class="absolute -inset-4 border border-brand-gold/20 rotate-3 group-hover:rotate-0 transition-transform duration-700"></div>
+                        <img src={billingbearHouseOld} class="relative z-10 w-full aspect-video object-cover shadow-2xl" alt="Billingbear House Heritage" />
+                    </div>
+                    <div>
+                        <span class="text-brand-gold font-serif italic text-4xl block mb-4">1567</span>
+                        <h3 class="font-serif text-3xl text-brand-green mb-6 italic">The Neville Lineage</h3>
+                        <p class="text-brand-dark/70 font-light leading-relaxed text-lg">
+                            Henry Neville, a descendant of the powerful Earls of Westmorland and Warwick, built the original <strong>Billingbear House</strong>. For generations, the Nevilles were courtiers to the Tudor and Stuart monarchs, hosting royalty within these very grounds.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Shakespeare Connection -->
+                <div class="bg-brand-green text-brand-cream p-12 md:p-20 rounded-sm mb-32 reveal overflow-hidden relative">
+                    <div class="absolute top-0 right-0 opacity-5 pointer-events-none transform translate-x-1/4 -translate-y-1/4">
+                        <img src={logoUrl} class="w-96 brightness-0 invert" />
+                    </div>
+                    <div class="max-w-3xl relative z-10">
+                        <span class="text-brand-gold uppercase tracking-widest text-[10px] font-bold mb-6 block">Literary Legend</span>
+                        <h3 class="font-serif text-4xl md:text-6xl mb-8 italic">The Shakespeare Mystery</h3>
+                        <p class="text-white/80 text-xl font-light leading-relaxed italic mb-8">
+                            "It is widely whispered amongst local historians that William Shakespeare may have composed parts of 'The Merry Wives of Windsor' while enjoying the hospitality of the Nevilles at Billingbear."
+                        </p>
+                        <p class="text-brand-gold font-bold uppercase tracking-widest text-xs">— Oral Tradition of Berkshire</p>
+                    </div>
+                </div>
+
+                <!-- 1989: Martin Hawtree -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-24 reveal">
+                    <div>
+                        <span class="text-brand-gold font-serif italic text-4xl block mb-4">1989</span>
+                        <h3 class="font-serif text-3xl text-brand-green mb-6 italic">The Modern Masterpiece</h3>
+                        <p class="text-brand-dark/70 font-light leading-relaxed text-lg">
+                            In 1989, the landscape underwent its most significant transformation. Renowned golf architect <strong>Martin Hawtree</strong> was commissioned to design a course that respected the ancient oaks and natural undulations of the park. The result was the Old Course—a strategic masterpiece that feels as if it has been here as long as the trees themselves.
+                        </p>
+                    </div>
+                    <div>
+                        <img src="https://images.pexels.com/photos/1325681/pexels-photo-1325681.jpeg" class="w-full aspect-video object-cover shadow-2xl rounded-sm" alt="Old Course Layout" />
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FINAL CTA -->
+        <section class="py-32 bg-brand-dark text-center reveal relative overflow-hidden">
+             <div class="absolute inset-0 opacity-10 flex items-center justify-center">
+                <img src={logoUrl} class="w-1/2 brightness-0 invert" />
+            </div>
+            <div class="relative z-10">
+                <h2 class="font-serif text-5xl md:text-7xl text-white italic mb-6">Walk the fairways of history</h2>
+                <p class="text-white/40 text-lg md:text-xl font-light mb-12 max-w-2xl mx-auto px-6 italic">Experience a thousand years of heritage with every swing.</p>
+                <div class="flex flex-col md:flex-row justify-center gap-6">
+                    <a href="/courses/old-course" class="bg-brand-gold text-brand-green px-12 py-5 text-xs font-bold uppercase tracking-[0.3em] hover:bg-white transition-all shadow-2xl leading-none">
+                        Explore the Old Course
+                    </a>
+                    <button class="booking-trigger border border-white/20 text-white px-12 py-5 text-xs font-bold uppercase tracking-[0.3em] hover:bg-white hover:text-brand-green transition-all leading-none">
+                        Book a Tee Time
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-brand-dark py-12 px-6 text-center border-t border-white/5">
+        <p class="text-[10px] uppercase tracking-[0.3em] text-white/20">© {new Date().getFullYear()} Billingbear Park • Berkshire Heritage Golf</p>
+    </footer>
+
+    <script>
+        const obs = new IntersectionObserver((es) => { 
+            es.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); }); 
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    </script>
+
+    <style>
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 1s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+    </style>
+</Layout>
