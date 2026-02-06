@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # exports folder
 exports/
+
+# Local Netlify folder
+.netlify

@@ -2,7 +2,9 @@
  * Cliente básico para conectar Astro con la REST API de WordPress.
  */
 
-const WP_URL = "http://billingbear-api.local/wp-json/wp/v2";
+// Usar variable de entorno o fallback a producción
+const WP_BASE_URL = import.meta.env.WORDPRESS_URL || "https://billingbearpark.com";
+const WP_URL = `${WP_BASE_URL}/wp-json/wp/v2`;
 
 export async function getCourses() {
   const res = await fetch(`${WP_URL}/courses?_embed&per_page=100`);
