@@ -1,0 +1,221 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getOrder } from '../../lib/woocommerce';
+
+export const prerender = false;
+
+const { orderId } = Astro.params;
+const orderKey = Astro.url.searchParams.get('key');
+
+if (!orderId) {
+  return Astro.redirect('/vouchers', 302);
+}
+
+let order;
+let error: string | null = null;
+
+try {
+  const orderIdNum = parseInt(orderId, 10);
+  if (isNaN(orderIdNum)) {
+    throw new Error('Invalid order ID');
+  }
+  order = await getOrder(orderIdNum);
+  
+  // Validar que la orden existe y no está pagada
+  if (order.status === 'completed' || order.status === 'processing') {
+    error = 'This order has already been paid.';
+  }
+} catch (err) {
+  error = err instanceof Error ? err.message : 'Order not found';
+}
+
+const logoUrl = "https://billingbearpark.com/wp-content/uploads/2020/10/cropped-treat2-2.png";
+---
+
+<Layout title={`Checkout - Order #${orderId} | Billingbear Park`}>
+  <nav class="bg-brand-green text-white py-4 px-6 sticky top-0 z-[100] shadow-xl border-b border-white/5">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <a href="/" class="flex items-center gap-4 group">
+        <img src={logoUrl} alt="Logo" class="h-8 md:h-10 w-auto brightness-0 invert" />
+        <div class="hidden md:block border-l border-white/20 pl-4">
+          <span class="font-serif italic text-lg leading-none block">Secure Checkout</span>
+        </div>
+      </a>
+      <a href="/vouchers" class="text-[9px] md:text-[10px] uppercase font-bold tracking-widest bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2 transition-all leading-none">
+        &larr; Back to Vouchers
+      </a>
+    </div>
+  </nav>
+
+  <main class="bg-brand-cream min-h-screen py-12 px-6">
+    <div class="max-w-2xl mx-auto">
+      {error ? (
+        <div class="bg-white border border-red-200 rounded-sm p-8 text-center">
+          <div class="text-red-600 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h2 class="font-serif text-2xl text-brand-green mb-2 italic">Order Error</h2>
+          <p class="text-brand-dark/70 mb-6">{error}</p>
+          <a href="/vouchers" class="inline-block bg-brand-green text-white px-8 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-brand-gold transition-all leading-none">
+            Return to Vouchers
+          </a>
+        </div>
+      ) : order ? (
+        <>
+          <div class="bg-white border border-brand-stone rounded-sm shadow-lg overflow-hidden mb-6">
+            <div class="bg-brand-green text-white p-6">
+              <span class="text-brand-gold uppercase tracking-widest text-[10px] font-bold block mb-2">Order Summary</span>
+              <h1 class="font-serif text-3xl md:text-4xl italic leading-tight">Order #{order.id}</h1>
+            </div>
+
+            <div class="p-6 md:p-8">
+              <table class="w-full mb-6">
+                <thead class="border-b border-brand-stone">
+                  <tr>
+                    <th class="text-left py-4 text-brand-green uppercase tracking-widest text-[10px] font-bold">Product</th>
+                    <th class="text-center py-4 text-brand-green uppercase tracking-widest text-[10px] font-bold">Qty</th>
+                    <th class="text-right py-4 text-brand-green uppercase tracking-widest text-[10px] font-bold">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {order.line_items.map((item: any) => (
+                    <tr class="border-b border-brand-stone/50">
+                      <td class="py-4">
+                        <div class="font-medium text-brand-dark">{item.name}</div>
+                        {order.meta_data?.find((m: any) => m.key === 'recipient_name') && (
+                          <div class="text-sm text-brand-dark/60 mt-1">
+                            For: {order.meta_data.find((m: any) => m.key === 'recipient_name')?.value}
+                          </div>
+                        )}
+                      </td>
+                      <td class="py-4 text-center text-brand-dark">× {item.quantity}</td>
+                      <td class="py-4 text-right font-serif text-brand-green text-lg italic">£{parseFloat(item.total).toFixed(2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot class="border-t-2 border-brand-stone">
+                  <tr>
+                    <td colspan="2" class="py-4 text-right font-bold text-brand-green uppercase tracking-widest text-[10px]">Total:</td>
+                    <td class="py-4 text-right font-serif text-brand-green text-2xl italic">£{parseFloat(order.total).toFixed(2)}</td>
+                  </tr>
+                </tfoot>
+              </table>
+
+              {order.payment_method_title && order.payment_method_title !== 'Direct Bank Transfer' && (
+                <div class="bg-brand-cream border-l-4 border-brand-gold p-4 mb-6">
+                  <p class="text-sm text-brand-dark/70">
+                    <strong class="text-brand-green">Payment Method:</strong> {order.payment_method_title}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div class="bg-white border border-brand-stone rounded-sm shadow-lg p-6 md:p-8">
+            <h2 class="font-serif text-2xl text-brand-green mb-6 italic">Complete Your Payment</h2>
+            
+            <div id="paymentsense-container" class="mb-6">
+              <p class="text-brand-dark/70 mb-4">
+                Pay securely by credit or debit card through Paymentsense.
+              </p>
+              <div class="bg-white border border-brand-stone rounded-sm overflow-hidden w-full">
+                <iframe 
+                  id="payment-iframe"
+                  src={`/api/checkout-proxy?orderId=${order.id}${orderKey ? `&key=${orderKey}` : ''}`}
+                  class="w-full border-0 block"
+                  style="width: 100%; min-height: 80vh; max-height: 90vh; display: block;"
+                  title="Secure Payment Form"
+                  sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation"
+                ></iframe>
+              </div>
+            </div>
+
+            <div class="bg-yellow-50 border border-yellow-200 rounded-sm p-4 mb-6">
+              <p class="text-sm text-yellow-800">
+                <strong>Note:</strong> This is a secure payment page. Your payment details are processed securely by Paymentsense and never stored on our servers.
+              </p>
+            </div>
+
+            <div class="flex gap-4">
+              <a href="/vouchers" class="flex-1 border border-brand-stone text-brand-dark px-6 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-brand-stone/50 transition-all text-center leading-none">
+                Cancel Order
+              </a>
+            </div>
+          </div>
+        </>
+      ) : null}
+    </div>
+  </main>
+
+  <script define:vars={{ orderId }}>
+    // El iframe carga el formulario de pago a través de nuestro proxy
+    // El proxy oculta header/footer de WordPress sin modificar el sitio original
+    
+    const iframe = document.getElementById('payment-iframe');
+    
+    // Detectar cuando el pago se completa
+    window.addEventListener('message', (event) => {
+      // Aceptar mensajes de nuestro dominio (el proxy)
+      if (event.data && event.data.type === 'payment-complete') {
+        // Redirigir a página de confirmación en nuestro sitio
+        window.location.href = `/checkout/complete?order=${orderId}`;
+      }
+    });
+    
+    // También detectar cambios en la URL del iframe (fallback)
+    if (iframe) {
+      let lastSrc = iframe.src;
+      const checkUrl = setInterval(() => {
+        try {
+          // Intentar acceder a la URL del iframe (solo funciona si es mismo origen)
+          // Como usamos proxy, esto debería funcionar
+          if (iframe.contentWindow?.location.href !== lastSrc) {
+            const newUrl = iframe.contentWindow?.location.href;
+            if (newUrl && (newUrl.includes('order-received') || newUrl.includes('thank-you'))) {
+              clearInterval(checkUrl);
+              window.location.href = `/checkout/complete?order=${orderId}`;
+            }
+            lastSrc = newUrl || lastSrc;
+          }
+        } catch (e) {
+          // Cross-origin error esperado si el iframe navega fuera de nuestro dominio
+          // En ese caso, confiamos en el postMessage
+        }
+      }, 1000);
+      
+      // Limpiar el intervalo después de 5 minutos
+      setTimeout(() => clearInterval(checkUrl), 300000);
+    }
+  </script>
+  
+  <style>
+    /* Asegurar que el iframe se vea bien y ocupe todo el espacio */
+    #payment-iframe {
+      width: 100%;
+      border: none;
+      min-height: 80vh;
+      max-height: 90vh;
+      display: block;
+    }
+    
+    /* Contenedor del iframe */
+    #paymentsense-container {
+      width: 100%;
+      overflow: hidden;
+    }
+    
+    #paymentsense-container > div {
+      width: 100%;
+      overflow: hidden;
+    }
+    
+    /* Asegurar que la página no tenga scroll horizontal */
+    main {
+      overflow-x: hidden;
+      width: 100%;
+      max-width: 100%;
+    }
+  </style>
+</Layout>

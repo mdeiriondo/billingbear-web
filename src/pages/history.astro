@@ -7,7 +7,10 @@ const historyHero = "https://images.pexels.com/photos/1632790/pexels-photo-16327
 const billingbearHouseOld = "https://i.postimg.cc/9XRfbQbx/image3.png";
 
 // Domesday Book Custom Image (Generated for historical accuracy)
-const domesdayImage = "https://i.postimg.cc/8CmpFF1Q/image.png"; 
+const domesdayImage = "https://i.postimg.cc/8CmpFF1Q/image.png";
+
+// URLs BRS GOLF
+const brsOldCourse = "https://visitors.brsgolf.com/billingbearold#/course/1"; 
 ---
 
 <Layout title="History & Heritage | Billingbear Park">
@@ -24,7 +27,7 @@ const domesdayImage = "https://i.postimg.cc/8CmpFF1Q/image.png";
             
             <div class="flex items-center gap-6 md:gap-10">
                 <div class="hidden lg:flex gap-6 text-[10px] uppercase font-bold tracking-widest text-white/70">
-                    <a href="/courses/old-course" class="hover:text-brand-gold transition-colors">Old Course</a>
+                    <a href="/courses/the-old-course" class="hover:text-brand-gold transition-colors">Old Course</a>
                     <a href="/vouchers" class="hover:text-brand-gold transition-colors">Gift Vouchers</a>
                 </div>
                 <a href="/" class="text-[9px] md:text-[10px] uppercase font-bold tracking-widest bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2 transition-all leading-none">
@@ -136,12 +139,12 @@ const domesdayImage = "https://i.postimg.cc/8CmpFF1Q/image.png";
                 <h2 class="font-serif text-5xl md:text-7xl text-white italic mb-6">Walk the fairways of history</h2>
                 <p class="text-white/40 text-lg md:text-xl font-light mb-12 max-w-2xl mx-auto px-6 italic">Experience a thousand years of heritage with every swing.</p>
                 <div class="flex flex-col md:flex-row justify-center gap-6">
-                    <a href="/courses/old-course" class="bg-brand-gold text-brand-green px-12 py-5 text-xs font-bold uppercase tracking-[0.3em] hover:bg-white transition-all shadow-2xl leading-none">
+                    <a href="/courses/the-old-course" class="bg-brand-gold text-brand-green px-12 py-5 text-xs font-bold uppercase tracking-[0.3em] hover:bg-white transition-all shadow-2xl leading-none">
                         Explore the Old Course
                     </a>
-                    <button class="booking-trigger border border-white/20 text-white px-12 py-5 text-xs font-bold uppercase tracking-[0.3em] hover:bg-white hover:text-brand-green transition-all leading-none">
+                    <a href={brsOldCourse} target="_blank" rel="noopener noreferrer" class="border border-white/20 text-white px-12 py-5 text-xs font-bold uppercase tracking-[0.3em] hover:bg-white hover:text-brand-green transition-all leading-none inline-block">
                         Book a Tee Time
-                    </button>
+                    </a>
                 </div>
             </div>
         </section>

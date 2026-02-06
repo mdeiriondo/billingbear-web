@@ -24,6 +24,11 @@ const holes = allHoles
 const logoUrl = "https://billingbearpark.com/wp-content/uploads/2020/10/cropped-treat2-2.png";
 const featuredImage = course._embedded?.['wp:featuredmedia']?.[0]?.source_url || "https://images.pexels.com/photos/1325681/pexels-photo-1325681.jpeg";
 
+// URLs BRS GOLF - Determinar según el slug del curso
+const brsOldCourse = "https://visitors.brsgolf.com/billingbearold#/course/1";
+const brsNewCourse = "https://visitors.brsgolf.com/billingbearshort#/course/1";
+const brsBookingUrl = course.slug === 'the-old-course' ? brsOldCourse : course.slug === 'the-new-course' ? brsNewCourse : brsOldCourse;
+
 // Gallery Mock
 const gallery = [
     "https://images.pexels.com/photos/1325681/pexels-photo-1325681.jpeg",
@@ -88,9 +93,9 @@ const gallery = [
                     <span class="text-3xl font-serif text-brand-green italic leading-none">{course.acf?.rating || '70.2'}</span>
                 </div>
                 <div class="p-8 text-center flex items-center justify-center">
-                    <button class="booking-trigger bg-brand-gold text-brand-green px-6 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-brand-green hover:text-white transition-all shadow-md leading-none">
+                    <a href={brsBookingUrl} target="_blank" rel="noopener noreferrer" class="bg-brand-gold text-brand-green px-6 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-brand-green hover:text-white transition-all shadow-md leading-none inline-block">
                         Book Tee Time
-                    </button>
+                    </a>
                 </div>
             </div>
         </section>
@@ -278,9 +283,9 @@ const gallery = [
             <div class="relative z-10">
                 <h2 class="font-serif text-5xl md:text-7xl text-white italic mb-6 leading-tight">Master the Course</h2>
                 <p class="text-white/60 text-lg md:text-xl font-light mb-12 max-w-2xl mx-auto px-6">Experience the game that has captivated Berkshire golfers for over 30 years.</p>
-                <button class="booking-trigger bg-brand-gold text-brand-green px-12 py-5 text-xs font-bold uppercase tracking-[0.3em] hover:bg-white transition-all shadow-2xl leading-none">
+                <a href={brsBookingUrl} target="_blank" rel="noopener noreferrer" class="bg-brand-gold text-brand-green px-12 py-5 text-xs font-bold uppercase tracking-[0.3em] hover:bg-white transition-all shadow-2xl leading-none inline-block">
                     Book Now
-                </button>
+                </a>
             </div>
         </section>
     </main>

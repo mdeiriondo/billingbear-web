@@ -130,6 +130,16 @@
           "name": "cta_link",
           "type": "url",
           "instructions": "Direct link to the Stripe or Square checkout page."
+        },
+        {
+          "key": "field_voucher_woo_id",
+          "label": "WooCommerce Product ID",
+          "name": "woo_product_id",
+          "type": "number",
+          "instructions": "The WooCommerce product ID for this voucher. Required for headless checkout.",
+          "required": 0,
+          "default_value": "",
+          "placeholder": "e.g. 123"
         }
       ],
       "location": [

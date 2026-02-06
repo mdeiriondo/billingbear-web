@@ -1,0 +1,160 @@
+🔍 Obteniendo vouchers desde WordPress...
+
+📡 Obteniendo vouchers desde: https://billingbearpark.com/wp-json/wp/v2/vouchers
+❌ Error obteniendo vouchers: HTTP 404: Not Found
+⚠️  Intentando con URL local: http://billingbear-api.local/wp-json/wp/v2
+✅ Encontrados 11 vouchers
+
+🔍 Obteniendo productos de WooCommerce...
+
+📡 Obteniendo productos desde: https://billingbearpark.com/wp-json/wc/v3/products?per_page=100
+✅ Encontrados 15 productos de WooCommerce
+
+📋 LISTADO DE VOUCHERS Y SUS IDs DE WOOCOMMERCE:
+
+====================================================================================================
+| Voucher Name                                         | WooCommerce Product ID | Match Status |
+====================================================================================================
+| 9 holes on the New Course                             | 3606                  | ⚠️  Diferente |
+| Wine and Golf                                         | N/A                   | ❌ No encontrado |
+| 10 x 45 minute individual lessons                     | N/A                   | ❌ No encontrado |
+| 45 minute individual lesson                           | N/A                   | ❌ No encontrado |
+| Monetary Gift Voucher                                 | 3656                  | ✅ Correcto   |
+| 18 holes on the Old Course                            | 3580                  | ⚠️  Diferente |
+| 4 golfers, 18 holes on the Old Course                 | 4160                  | ⚠️  Diferente |
+| 2 golfers, 9 holes on the New Course &#038; refreshme | 4160                  | ⚠️  Diferente |
+| 1 golfer, 18 holes on the Old Course &#038; refreshme | 4160                  | ⚠️  Diferente |
+| 2 golfers, 18 holes on the Old Course, buggy &#038; r | 4160                  | ⚠️  Diferente |
+| 1 golfer, 9 holes on the New Course &#038; refreshmen | 4160                  | ⚠️  Diferente |
+====================================================================================================
+
+📝 RESUMEN DETALLADO PARA ACTUALIZAR EN ACF:
+
+====================================================================================================
+
+Voucher: "9 holes on the New Course"
+  ID actual en ACF: 162
+  ✅ ID correcto de WooCommerce: 3606
+  Nombre del producto WC: "2 golfers, 9 holes on the New Course & refreshments"
+  Precio: £55
+  ⚠️  NECESITA ACTUALIZACIÓN: Cambiar de 162 a 3606
+  ------------------------------------------------------------------------------------------------
+
+Voucher: "Wine and Golf"
+  ID actual en ACF: 158
+  ❌ No se encontró producto coincidente en WooCommerce
+  💡 Revisa manualmente en WooCommerce > Products
+  ------------------------------------------------------------------------------------------------
+
+Voucher: "10 x 45 minute individual lessons"
+  ID actual en ACF: 159
+  ❌ No se encontró producto coincidente en WooCommerce
+  💡 Revisa manualmente en WooCommerce > Products
+  ------------------------------------------------------------------------------------------------
+
+Voucher: "45 minute individual lesson"
+  ID actual en ACF: 160
+  ❌ No se encontró producto coincidente en WooCommerce
+  💡 Revisa manualmente en WooCommerce > Products
+  ------------------------------------------------------------------------------------------------
+
+Voucher: "Monetary Gift Voucher"
+  ID actual en ACF: 3656
+  ✅ ID correcto de WooCommerce: 3656
+  Nombre del producto WC: "Monetary Gift Voucher"
+  Precio: £10.00
+  ------------------------------------------------------------------------------------------------
+
+Voucher: "18 holes on the Old Course"
+  ID actual en ACF: 163
+  ✅ ID correcto de WooCommerce: 3580
+  Nombre del producto WC: "2 golfers, 18 holes on the Old course & refreshments"
+  Precio: £90
+  ⚠️  NECESITA ACTUALIZACIÓN: Cambiar de 163 a 3580
+  ------------------------------------------------------------------------------------------------
+
+Voucher: "4 golfers, 18 holes on the Old Course"
+  ID actual en ACF: 164
+  ✅ ID correcto de WooCommerce: 4160
+  Nombre del producto WC: "a wine tour for 2 at Stanlake Park and 9 holes for 2 golfers on the New Course"
+  Precio: £70.00
+  ⚠️  NECESITA ACTUALIZACIÓN: Cambiar de 164 a 4160
+  ------------------------------------------------------------------------------------------------
+
+Voucher: "2 golfers, 9 holes on the New Course &#038; refreshments"
+  ID actual en ACF: 165
+  ✅ ID correcto de WooCommerce: 4160
+  Nombre del producto WC: "a wine tour for 2 at Stanlake Park and 9 holes for 2 golfers on the New Course"
+  Precio: £70.00
+  ⚠️  NECESITA ACTUALIZACIÓN: Cambiar de 165 a 4160
+  ------------------------------------------------------------------------------------------------
+
+Voucher: "1 golfer, 18 holes on the Old Course &#038; refreshments"
+  ID actual en ACF: 168
+  ✅ ID correcto de WooCommerce: 4160
+  Nombre del producto WC: "a wine tour for 2 at Stanlake Park and 9 holes for 2 golfers on the New Course"
+  Precio: £70.00
+  ⚠️  NECESITA ACTUALIZACIÓN: Cambiar de 168 a 4160
+  ------------------------------------------------------------------------------------------------
+
+Voucher: "2 golfers, 18 holes on the Old Course, buggy &#038; refreshments"
+  ID actual en ACF: 167
+  ✅ ID correcto de WooCommerce: 4160
+  Nombre del producto WC: "a wine tour for 2 at Stanlake Park and 9 holes for 2 golfers on the New Course"
+  Precio: £70.00
+  ⚠️  NECESITA ACTUALIZACIÓN: Cambiar de 167 a 4160
+  ------------------------------------------------------------------------------------------------
+
+Voucher: "1 golfer, 9 holes on the New Course &#038; refreshments"
+  ID actual en ACF: No configurado
+  ✅ ID correcto de WooCommerce: 4160
+  Nombre del producto WC: "a wine tour for 2 at Stanlake Park and 9 holes for 2 golfers on the New Course"
+  Precio: £70.00
+  ⚠️  NECESITA ACTUALIZACIÓN: Cambiar de No configurado a 4160
+  ------------------------------------------------------------------------------------------------
+
+
+📋 LISTADO PARA COPIAR Y PEGAR EN ACF:
+
+====================================================================================================
+Voucher Name | WooCommerce Product ID
+====================================================================================================
+9 holes on the New Course | 3606
+Wine and Golf | REVISAR MANUALMENTE
+10 x 45 minute individual lessons | REVISAR MANUALMENTE
+45 minute individual lesson | REVISAR MANUALMENTE
+Monetary Gift Voucher | 3656
+18 holes on the Old Course | 3580
+4 golfers, 18 holes on the Old Course | 4160
+2 golfers, 9 holes on the New Course &#038; refreshments | 4160
+1 golfer, 18 holes on the Old Course &#038; refreshments | 4160
+2 golfers, 18 holes on the Old Course, buggy &#038; refreshments | 4160
+1 golfer, 9 holes on the New Course &#038; refreshments | 4160
+
+
+📦 TODOS LOS PRODUCTOS DISPONIBLES EN WOOCOMMERCE:
+
+====================================================================================================
+ID  | Nombre del Producto | Precio
+====================================================================================================
+4160 | a wine tour for 2 at Stanlake Park and 9 holes for 2 golfers | £70.00    
+4058 | Test Booking Product                                         | £.01      
+4044 | voucher for 1 hour of shuffleboard                           | £20.00    
+3974 | Shuffleboard bookings                                        | £20.00    
+3730 | a Billingbear beanie or bobble hat                           | £22.00    
+3728 | a Billingbear cap                                            | £18.00    
+3656 | Monetary Gift Voucher                                        | £10.00    
+3606 | 2 golfers, 9 holes on the New Course & refreshments          | £55       
+3605 | 2 golfers, 9 holes on the Old Course & refreshments          | £65       
+3583 | 1 golfer, 9 holes on the New Course, refreshments, equipment | £65.00    
+3581 | 1 golfer, 9 holes on the New Course & refreshments           | £27       
+3580 | 2 golfers, 18 holes on the Old course & refreshments         | £90       
+3566 | discounted drinks with our Billingbear reuseable mug or bott | £15       
+3400 | Gift Card                                                    | £N/A      
+3351 | Gift Card                                                    | £10       
+
+💡 Si algún voucher no tiene match automático, revisa la lista de productos arriba
+   y actualiza manualmente el campo "woo_product_id" en ACF para ese voucher.
+
+✅ Proceso completado!
+

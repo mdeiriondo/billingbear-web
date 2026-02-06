@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import PurchaseButton from '../../components/PurchaseButton';
 import { getVouchers } from '../../lib/wp';
 
 const vouchers = await getVouchers();
@@ -24,8 +25,8 @@ const logoUrl = "https://billingbearpark.com/wp-content/uploads/2020/10/cropped-
             
             <div class="flex items-center gap-6 md:gap-10">
                 <div class="hidden lg:flex gap-6 text-[10px] uppercase font-bold tracking-widest text-white/70">
-                    <a href="/courses/old-course" class="hover:text-brand-gold transition-colors">Old Course</a>
-                    <a href="/courses/new-course" class="hover:text-brand-gold transition-colors">New Course</a>
+                    <a href="/courses/the-old-course" class="hover:text-brand-gold transition-colors">Old Course</a>
+                    <a href="/courses/the-new-course" class="hover:text-brand-gold transition-colors">New Course</a>
                 </div>
                 <a href="/" class="text-[9px] md:text-[10px] uppercase font-bold tracking-widest bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2 transition-all leading-none">
                     &larr; Return to Site
@@ -57,22 +58,42 @@ const logoUrl = "https://billingbearpark.com/wp-content/uploads/2020/10/cropped-
                 {vouchers.map((voucher: any) => {
                     const price = voucher.acf?.price;
                     const wooId = voucher.acf?.woo_product_id;
+                    const isOutOfStock = !wooId;
                     const cta = voucher.acf?.cta_link || (wooId ? `https://billingbearpark.com/checkout/?add-to-cart=${wooId}` : '#');
                     
                     return (
-                        <div id={voucher.id} class="bg-white border border-brand-stone rounded-sm overflow-hidden flex flex-col hover:shadow-2xl transition-all duration-500 group reveal">
+                        <div id={voucher.id} class={`bg-white border border-brand-stone rounded-sm overflow-hidden flex flex-col hover:shadow-2xl transition-all duration-500 group reveal ${isOutOfStock ? 'cursor-default' : ''}`}>
                             <div class="aspect-[4/3] overflow-hidden relative">
-                                <img src={getImageUrl(voucher)} class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110" />
-                                <div class="absolute inset-0 bg-brand-green/10 mix-blend-multiply group-hover:opacity-0 transition-opacity"></div>
-                                <div class="absolute top-4 right-4 bg-brand-green text-white px-3 py-1 text-[9px] font-bold uppercase tracking-widest leading-none">Voucher</div>
+                                <img src={getImageUrl(voucher)} class={`w-full h-full object-cover transition-all duration-700 ${isOutOfStock ? 'grayscale opacity-60' : 'grayscale group-hover:grayscale-0 group-hover:scale-110'}`} />
+                                <div class={`absolute inset-0 bg-brand-green/10 mix-blend-multiply transition-opacity ${isOutOfStock ? 'opacity-50' : 'group-hover:opacity-0'}`}></div>
+                                <div class={`absolute top-4 right-4 px-3 py-1 text-[9px] font-bold uppercase tracking-widest leading-none ${isOutOfStock ? 'bg-brand-dark/90 text-white' : 'bg-brand-green text-white'}`}>
+                                    {isOutOfStock ? 'Unavailable' : 'Voucher'}
+                                </div>
+                                {/* Badge "Currently Unavailable" superpuesto */}
+                                {isOutOfStock && (
+                                    <div class="absolute inset-0 flex items-center justify-center z-10">
+                                        <div class="bg-brand-dark/90 text-white px-6 py-3 text-[10px] font-bold uppercase tracking-widest leading-none shadow-xl">
+                                            Currently Unavailable
+                                        </div>
+                                    </div>
+                                )}
                             </div>
-                            <div class="p-8 flex flex-col flex-grow">
+                            <div class={`p-8 flex flex-col flex-grow ${isOutOfStock ? 'opacity-60' : ''}`}>
                                 <h3 class="font-serif text-2xl text-brand-green mb-3 italic leading-tight" set:html={voucher.title.rendered}></h3>
                                 <div class="text-sm text-brand-dark/60 font-light leading-relaxed mb-6 flex-grow line-clamp-3" set:html={voucher.content.rendered}></div>
                                 
                                 <div class="flex items-center justify-between pt-6 border-t border-brand-stone mt-auto">
                                     <span class="text-brand-green font-serif text-2xl italic leading-none">{price}</span>
-                                    <a href={cta} target="_blank" class="bg-brand-green text-white px-6 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-brand-gold transition-all leading-none shadow-md">Purchase &rarr;</a>
+                                    {wooId ? (
+                                        <PurchaseButton 
+                                            client:load
+                                            productId={wooId.toString()}
+                                            productName={voucher.title.rendered.replace(/<[^>]*>/g, '')}
+                                            price={price || 'N/A'}
+                                        />
+                                    ) : (
+                                        <span class="bg-brand-stone text-brand-dark/50 px-6 py-3 text-[10px] font-bold uppercase tracking-widest leading-none shadow-md cursor-not-allowed">Currently Unavailable</span>
+                                    )}
                                 </div>
                             </div>
                         </div>
