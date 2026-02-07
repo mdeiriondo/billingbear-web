@@ -94,10 +94,10 @@ Resumen de funciones de bajo nivel, widgets y piezas específicas creadas para B
 
 ## 5. Configuración y entorno
 
-- **Astro:** `output: "server"`. Adapter **Node** en dev, **Netlify** en build (`NODE_ENV=production`). Ver `astro.config.mjs`.
+- **Astro:** `output: "server"`. Adapter **Node** en dev, **Cloudflare Pages** en build (`NODE_ENV=production`). Ver `astro.config.mjs`.
 - **Estilos:** Tailwind 4 (`@tailwindcss/vite`), `src/styles/global.css` importado en `Layout.astro`.
-- **Env:** `.env` (no commiteado). Ejemplo en `.env.example`. Netlify: `NETLIFY_DEPLOY.md`.
-- **Local:** Node en dev evita problemas de __DEFINES__/MIME con el plugin de Netlify. Ver `LOCAL_DEV.md`.
+- **Env:** `.env` (no commiteado). Ejemplo en `.env.example`. Deploy: `DEPLOY_CLOUDFLARE.md`.
+- **Local:** Node en dev evita problemas de __DEFINES__/MIME con el plugin de Cloudflare en dev. Ver `LOCAL_DEV.md`.
 
 ---
 
@@ -117,5 +117,5 @@ Resumen de funciones de bajo nivel, widgets y piezas específicas creadas para B
 ## 7. Documentos relacionados
 
 - `LOCAL_DEV.md` — Cómo correr en local (Node adapter, .env, caché).
-- `NETLIFY_DEPLOY.md` — Variables de entorno y pasos para deploy en Netlify.
+- `DEPLOY_CLOUDFLARE.md` — Variables de entorno y pasos para deploy en Cloudflare Pages.
 - `.env.example` — Variables esperadas (sin valores).

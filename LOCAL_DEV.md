@@ -2,7 +2,7 @@
 
 ## Errores de consola (__DEFINES__, MIME type text/css)
 
-En local el proyecto usa el adapter **Node** en lugar de Netlify, así se evitan los errores del plugin de Netlify en dev (`__DEFINES__ is not defined`, scripts con MIME type incorrecto). El **build para Netlify** sigue usando el adapter Netlify (`npm run build` con `NODE_ENV=production`).
+En local el proyecto usa el adapter **Node** en lugar de Cloudflare, así se evitan los errores del plugin de Cloudflare en dev (`__DEFINES__ is not defined`, scripts con MIME type incorrecto). El **build para Cloudflare Pages** usa el adapter Cloudflare (`npm run build` con `NODE_ENV=production`).
 
 **Si sigues viendo errores, limpia caché y prueba en ventana de incógnito:**
 
@@ -32,4 +32,4 @@ WOOCOMMERCE_URL=http://billingbear-api.local
 
 Las credenciales WooCommerce (`WOOCOMMERCE_CONSUMER_KEY`, `WOOCOMMERCE_CONSUMER_SECRET`) tienen que ser las de esa instancia local si quieres probar checkout; si solo quieres ver contenido, con las dos URLs basta.
 
-**Para desplegar / que Netlify siga igual:** no subas el `.env` (está en `.gitignore`). En Netlify configura las mismas variables en el panel con los valores de producción.
+**Para desplegar:** no subas el `.env` (está en `.gitignore`). En Cloudflare Pages configura las mismas variables en el panel (Settings → Environment variables) con los valores de producción.
