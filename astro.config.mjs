@@ -3,6 +3,7 @@ import tailwind from "@tailwindcss/vite";
 import react from "@astrojs/react";
 import cloudflare from "@astrojs/cloudflare";
 import node from "@astrojs/node";
+import { messageChannelPolyfillPlugin } from "./scripts/messagechannel-polyfill-plugin.js";
 
 // En dev usamos Node (evita plugin que provoca __DEFINES__ y MIME type errors).
 // En producción: Cloudflare Pages.
@@ -12,7 +13,7 @@ export default defineConfig({
   output: "server",
   adapter: isProd ? cloudflare() : node({ mode: "standalone" }),
   vite: {
-    plugins: [tailwind()],
+    plugins: [tailwind(), ...(isProd ? [messageChannelPolyfillPlugin()] : [])],
     resolve: {
       alias:
         import.meta.env.PROD
