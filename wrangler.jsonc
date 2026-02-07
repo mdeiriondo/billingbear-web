@@ -1,5 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "billingbearpark",
-  "pages_build_output_dir": "./dist"
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2025-08-15"
 }
