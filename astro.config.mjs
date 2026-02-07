@@ -13,6 +13,23 @@ export default defineConfig({
   adapter: isProd ? cloudflare() : node({ mode: "standalone" }),
   vite: {
     plugins: [tailwind()],
+    resolve: {
+      alias:
+        import.meta.env.PROD
+          ? {
+              "react-dom/server": "react-dom/server.edge",
+              "react-dom/server.browser": "react-dom/server.edge",
+            }
+          : {},
+    },
+    ssr:
+      import.meta.env.PROD
+        ? {
+            resolve: {
+              conditions: ["workerd", "worker", "import", "module"],
+            },
+          }
+        : {},
   },
   image: {
     domains: ["billingbearpark.com", "images.pexels.com"],
