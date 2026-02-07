@@ -128,10 +128,27 @@ export async function createVoucherOrder(
 }
 
 /**
+ * Construye WooCommerceConfig desde un objeto env (p. ej. locals.runtime.env en Cloudflare).
+ * Útil para páginas SSR y API routes que reciben runtime env.
+ */
+export function getWooConfigFromEnv(env: Record<string, unknown> | undefined): WooCommerceConfig | undefined {
+  if (!env) return undefined;
+  const url = typeof env.WOOCOMMERCE_URL === 'string' ? env.WOOCOMMERCE_URL.trim() : '';
+  const consumerKey = typeof env.WOOCOMMERCE_CONSUMER_KEY === 'string' ? env.WOOCOMMERCE_CONSUMER_KEY.trim() : '';
+  const consumerSecret = typeof env.WOOCOMMERCE_CONSUMER_SECRET === 'string' ? env.WOOCOMMERCE_CONSUMER_SECRET.trim() : '';
+  if (!consumerKey || !consumerSecret) return undefined;
+  let baseUrl = url || 'https://billingbearpark.com';
+  if (baseUrl.startsWith('http://') && baseUrl.includes('billingbearpark.com')) {
+    baseUrl = baseUrl.replace('http://', 'https://');
+  }
+  return { url: baseUrl, consumerKey, consumerSecret };
+}
+
+/**
  * Obtiene información de un producto de WooCommerce
  */
-export async function getProduct(productId: number): Promise<any> {
-  const config = getWooCommerceConfig();
+export async function getProduct(productId: number, runtimeConfig?: WooCommerceConfig): Promise<any> {
+  const config = runtimeConfig ?? getWooCommerceConfig();
   const apiUrl = `${config.url}/wp-json/wc/v3/products/${productId}`;
 
   try {
@@ -160,10 +177,11 @@ export async function getProduct(productId: number): Promise<any> {
 }
 
 /**
- * Obtiene los detalles de una orden de WooCommerce
+ * Obtiene los detalles de una orden de WooCommerce.
+ * En Cloudflare Pages pasa runtimeConfig desde Astro.locals.runtime.env.
  */
-export async function getOrder(orderId: number): Promise<any> {
-  const config = getWooCommerceConfig();
+export async function getOrder(orderId: number, runtimeConfig?: WooCommerceConfig): Promise<any> {
+  const config = runtimeConfig ?? getWooCommerceConfig();
   const apiUrl = `${config.url}/wp-json/wc/v3/orders/${orderId}`;
 
   try {
@@ -194,9 +212,9 @@ export async function getOrder(orderId: number): Promise<any> {
 /**
  * Obtiene el order key de una orden (necesario para validar el pago)
  */
-export async function getOrderKey(orderId: number): Promise<string | null> {
+export async function getOrderKey(orderId: number, runtimeConfig?: WooCommerceConfig): Promise<string | null> {
   try {
-    const order = await getOrder(orderId);
+    const order = await getOrder(orderId, runtimeConfig);
     return order.order_key || null;
   } catch (error) {
     return null;

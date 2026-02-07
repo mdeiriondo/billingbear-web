@@ -1,11 +1,14 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getOrder } from '../../lib/woocommerce';
+import { getOrder, getWooConfigFromEnv } from '../../lib/woocommerce';
 
 export const prerender = false;
 
 const { orderId } = Astro.params;
 const orderKey = Astro.url.searchParams.get('key');
+
+// Credenciales en runtime (Cloudflare) o import.meta.env en dev
+const wooConfig = getWooConfigFromEnv((Astro.locals as { runtime?: { env?: Record<string, unknown> } }).runtime?.env);
 
 if (!orderId) {
   return Astro.redirect('/vouchers', 302);
@@ -19,8 +22,8 @@ try {
   if (isNaN(orderIdNum)) {
     throw new Error('Invalid order ID');
   }
-  order = await getOrder(orderIdNum);
-  
+  order = await getOrder(orderIdNum, wooConfig ?? undefined);
+
   // Validar que la orden existe y no está pagada
   if (order.status === 'completed' || order.status === 'processing') {
     error = 'This order has already been paid.';

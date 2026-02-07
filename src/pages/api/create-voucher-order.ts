@@ -1,25 +1,8 @@
 import type { APIRoute } from 'astro';
-import { createVoucherOrder, type WooCommerceConfig } from '../../lib/woocommerce';
+import { createVoucherOrder, getWooConfigFromEnv } from '../../lib/woocommerce';
 
 // Este endpoint debe ejecutarse en el servidor, no prerenderizarse
 export const prerender = false;
-
-type LocalsWithRuntime = { runtime?: { env?: Record<string, unknown> } };
-
-/** Obtiene config de WooCommerce desde runtime env (Cloudflare) o import.meta.env (dev). */
-function getWooConfigFromContext(locals: LocalsWithRuntime): WooCommerceConfig | undefined {
-  const env = locals.runtime?.env;
-  if (!env) return undefined;
-  const url = typeof env.WOOCOMMERCE_URL === 'string' ? env.WOOCOMMERCE_URL.trim() : '';
-  const consumerKey = typeof env.WOOCOMMERCE_CONSUMER_KEY === 'string' ? env.WOOCOMMERCE_CONSUMER_KEY.trim() : '';
-  const consumerSecret = typeof env.WOOCOMMERCE_CONSUMER_SECRET === 'string' ? env.WOOCOMMERCE_CONSUMER_SECRET.trim() : '';
-  if (!consumerKey || !consumerSecret) return undefined;
-  let baseUrl = url || 'https://billingbearpark.com';
-  if (baseUrl.startsWith('http://') && baseUrl.includes('billingbearpark.com')) {
-    baseUrl = baseUrl.replace('http://', 'https://');
-  }
-  return { url: baseUrl, consumerKey, consumerSecret };
-}
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
@@ -77,7 +60,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // Credenciales en runtime (Cloudflare) o desde import.meta.env en dev
-    const runtimeConfig = getWooConfigFromContext(locals);
+    const runtimeConfig = getWooConfigFromEnv((locals as { runtime?: { env?: Record<string, unknown> } }).runtime?.env);
 
     // Crear la orden en WooCommerce
     const result = await createVoucherOrder(

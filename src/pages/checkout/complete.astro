@@ -1,9 +1,10 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getOrder } from '../../lib/woocommerce';
+import { getOrder, getWooConfigFromEnv } from '../../lib/woocommerce';
 
 export const prerender = false;
 
+const wooConfig = getWooConfigFromEnv((Astro.locals as { runtime?: { env?: Record<string, unknown> } }).runtime?.env);
 const orderIdParam = Astro.url.searchParams.get('order');
 
 if (!orderIdParam) {
@@ -18,7 +19,7 @@ try {
   if (isNaN(orderIdNum)) {
     throw new Error('Invalid order ID');
   }
-  order = await getOrder(orderIdNum);
+  order = await getOrder(orderIdNum, wooConfig ?? undefined);
 } catch (err) {
   error = err instanceof Error ? err.message : 'Order not found';
 }
