@@ -21,6 +21,7 @@ const { title } = Astro.props;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
+    <!-- Fuentes no bloqueantes; display=swap evita texto invisible -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
       rel="stylesheet"
@@ -33,6 +34,8 @@ const { title } = Astro.props;
         rel="stylesheet"
       />
     </noscript>
+
+    <slot name="head" />
 
     <title>{title}</title>
   </head>

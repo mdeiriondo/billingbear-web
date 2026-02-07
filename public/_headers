@@ -1,3 +1,7 @@
+# Assets con hash: cache largo (PageSpeed – efficient cache lifetimes)
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
 /*
   Cache-Control: public, max-age=31536000, immutable
 
