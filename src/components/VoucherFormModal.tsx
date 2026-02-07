@@ -219,6 +219,7 @@ export default function VoucherFormModal({
     </div>
   );
 
-  // Usar Portal para renderizar fuera del árbol DOM
+  // Usar Portal solo en el cliente (evita "Access to storage is not allowed" en edge/SSR)
+  if (typeof document === 'undefined' || !document.body) return null;
   return createPortal(modalContent, document.body);
 }

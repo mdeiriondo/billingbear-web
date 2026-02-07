@@ -86,7 +86,7 @@ const logoUrl = "https://billingbearpark.com/wp-content/uploads/2020/10/cropped-
                                     <span class="text-brand-green font-serif text-2xl italic leading-none">{price}</span>
                                     {wooId ? (
                                         <PurchaseButton 
-                                            client:load
+                                            client:only="react"
                                             productId={wooId.toString()}
                                             productName={voucher.title.rendered.replace(/<[^>]*>/g, '')}
                                             price={price || 'N/A'}

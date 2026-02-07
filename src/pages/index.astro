@@ -683,7 +683,7 @@ const shuffleBookingUrl =
                         </span>
                         {wooId ? (
                           <PurchaseButton
-                            client:idle
+                            client:only="react"
                             productId={wooId.toString()}
                             productName={voucher.title.rendered.replace(/<[^>]*>/g, '')}
                             price={price || 'N/A'}
