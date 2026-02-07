@@ -4,6 +4,7 @@ import WeatherWidget from '../components/WeatherWidget';
 import PurchaseButton from '../components/PurchaseButton';
 import { getVouchers, getCourseStatus } from '../lib/wp';
 import { Image } from 'astro:assets';
+import heroImage from '../assets/images/heroBBP.webp';
 
 // Fetch de datos reales desde WordPress
 const allVouchers = await getVouchers();
@@ -43,7 +44,6 @@ const getImageUrl = (v: any) =>
 
 // ASSETS
 const logoUrl = 'https://billingbearpark.com/wp-content/uploads/2020/10/cropped-treat2-2.png';
-const heroImage = 'https://billingbearpark.com/wp-content/uploads/2019/04/cropped-SteveF3-7.jpg';
 const shuffleboardImage =
   'https://images.pexels.com/photos/696218/pexels-photo-696218.jpeg?auto=compress&cs=tinysrgb&w=800';
 const eventsImage =
