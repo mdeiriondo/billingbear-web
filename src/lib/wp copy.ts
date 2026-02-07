@@ -16,37 +16,17 @@ let vouchersLastFetch = 0;
 let coursesCache: any = null;
 let coursesLastFetch = 0;
 
-// Helper genérico
-async function fetchWithCache(url: string, cacheRef: { data: any; time: number }) {
-  const now = Date.now();
-
-  if (cacheRef.data && now - cacheRef.time < CACHE_TTL) {
-    return cacheRef.data;
-  }
-
-  const res = await fetch(url);
-
-  if (!res.ok) {
-    console.error(`WordPress API error: ${res.status} ${res.statusText}`);
-    return [];
-  }
-
-  const data = await res.json();
-  cacheRef.data = data;
-  cacheRef.time = now;
-
-  return data;
-}
 
 export async function getCourses() {
   try {
-    return await fetchWithCache(
-      `${WP_URL}/courses?_embed&per_page=100`,
-      { get data() { return coursesCache; }, set data(v) { coursesCache = v; },
-        get time() { return coursesLastFetch; }, set time(v) { coursesLastFetch = v; } }
-    );
+    const res = await fetch(`${WP_URL}/courses?_embed&per_page=100`);
+    if (!res.ok) {
+      console.error(`WordPress API error: ${res.status} ${res.statusText}`);
+      return [];
+    }
+    return await res.json();
   } catch (error) {
-    console.error("Error fetching courses:", error);
+    console.error('Error fetching courses:', error);
     return [];
   }
 }
@@ -58,6 +38,8 @@ export async function getCourseBySlug(slug: string) {
 }
 
 export async function getHoles(courseId?: number) {
+  // Si pasamos un ID de curso, filtramos por ese curso.
+  // En WP Headless, solemos usar un parámetro de filtro o categoría.
   let url = `${WP_URL}/holes?_embed&per_page=100`;
   if (courseId) url += `&course=${courseId}`;
   const res = await fetch(url);
@@ -66,23 +48,29 @@ export async function getHoles(courseId?: number) {
 
 export async function getVouchers() {
   try {
-    return await fetchWithCache(
-      `${WP_URL}/vouchers?_embed`,
-      { get data() { return vouchersCache; }, set data(v) { vouchersCache = v; },
-        get time() { return vouchersLastFetch; }, set time(v) { vouchersLastFetch = v; } }
-    );
+    const res = await fetch(`${WP_URL}/vouchers?_embed`);
+    if (!res.ok) {
+      console.error(`WordPress API error: ${res.status} ${res.statusText}`);
+      return [];
+    }
+    return await res.json();
   } catch (error) {
-    console.error("Error fetching vouchers:", error);
+    console.error('Error fetching vouchers:', error);
     return [];
   }
 }
 
 export async function getCourseStatus() {
   try {
-    const courses = await getCourses();
+    const res = await fetch(`${WP_URL}/courses?_embed`);
+    if (!res.ok) {
+      console.error(`WordPress API error: ${res.status} ${res.statusText}`);
+      return "Open";
+    }
+    const courses = await res.json();
     return courses[0]?.acf?.course_status || "Open";
   } catch (error) {
-    console.error("Error fetching course status:", error);
+    console.error('Error fetching course status:', error);
     return "Open";
   }
 }

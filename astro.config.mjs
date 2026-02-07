@@ -14,5 +14,8 @@ export default defineConfig({
   vite: {
     plugins: [tailwind()],
   },
+  image: {
+    domains: ["billingbearpark.com", "images.pexels.com"],
+  },
   integrations: [react()],
 });

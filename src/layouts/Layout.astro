@@ -1,9 +1,9 @@
 ---
-import "../styles/global.css";
+import '../styles/global.css';
 // IMPORTANTE: Importamos los estilos de Tailwind 4
 
 interface Props {
-	title: string;
+  title: string;
 }
 
 const { title } = Astro.props;
@@ -11,21 +11,32 @@ const { title } = Astro.props;
 
 <!doctype html>
 <html lang="en" class="scroll-smooth">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="Billingbear Park Golf Course - Golf in the Royal Landscape" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="google-site-verification" content="xuKj5JORjce3z5yQFCott3KRjsfLpWBfSoenE3RF3M4" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		
-		<!-- Google Fonts: Playfair Display & Inter -->
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-		
-		<title>{title}</title>
-	</head>
-	<body class="bg-brand-cream text-brand-dark font-sans antialiased">
-		<slot />
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Billingbear Park Golf Course - Golf in the Royal Landscape" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="google-site-verification" content="xuKj5JORjce3z5yQFCott3KRjsfLpWBfSoenE3RF3M4" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
+
+    <title>{title}</title>
+  </head>
+  <body class="bg-brand-cream text-brand-dark font-sans antialiased">
+    <slot />
+  </body>
 </html>
