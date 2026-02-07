@@ -1,14 +1,30 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import WeatherWidget from '../components/WeatherWidget';
+import PurchaseButton from '../components/PurchaseButton';
 import { getVouchers, getCourseStatus } from '../lib/wp';
 
 // Fetch de datos reales desde WordPress
 const allVouchers = await getVouchers();
 
-// Lógica de Negocio: Filtramos los 4 que irán a la Home
-// Priorizamos los Featured y cortamos a 4 para mantener el diseño limpio
+// Lógica de Negocio: Filtramos los 5 que irán a la Home
+// Priorizamos los que tienen woocommerce_product_id, luego los Featured
 const homeVouchers = allVouchers
-    .sort((a: any, b: any) => (b.acf?.is_featured ? 1 : -1))
+    .sort((a: any, b: any) => {
+        // Primero priorizar los que tienen woo_product_id
+        const aHasWooId = !!a.acf?.woo_product_id;
+        const bHasWooId = !!b.acf?.woo_product_id;
+        
+        if (aHasWooId && !bHasWooId) return -1;
+        if (!aHasWooId && bHasWooId) return 1;
+        
+        // Si ambos tienen o no tienen woo_product_id, priorizar featured
+        if (aHasWooId && bHasWooId) {
+            return (b.acf?.is_featured ? 1 : 0) - (a.acf?.is_featured ? 1 : 0);
+        }
+        
+        return (b.acf?.is_featured ? 1 : -1);
+    })
     .slice(0, 5);
 
 // Datos de estado para la demo con descripciones detalladas para el sistema de "Reveal"
@@ -41,47 +57,54 @@ const heritageImage = "https://images.pexels.com/photos/1632790/pexels-photo-163
 const brsOldCourse = "https://visitors.brsgolf.com/billingbearold#/course/1";
 const brsNewCourse = "https://visitors.brsgolf.com/billingbearshort#/course/1";
 
-// URL Shuffleboard (SimplyBook)
-const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type=iframe&theme=default&theme=default&timeline=modern&datepicker=top_calendar#book/service/2/count/1/provider/2/";
+// URL Shuffleboard (SimplyBook) - Personalizado con colores del sitio
+// Colores: brand-green (#2d5016), brand-gold (#d4af37)
+// Usando parámetros de tema de SimplyBook para personalizar colores
+const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type=iframe&theme=minimal&timeline=modern&datepicker=top_calendar&sb_base_color=2d5016&btn_color_1=d4af37&link_color=2d5016&body_bg_color=ffffff&dark_font_color=1a1a1a&light_font_color=ffffff&sb_available=d4af37&sb_busy=cccccc#book/service/2/count/1/provider/2/";
 ---
 
 <Layout title="Billingbear Park | Pay & Play Golf in Berkshire">
 	
 	<!-- 1. TOP BAR: COURSE STATUS -->
-	<div id="top-bar" class="bg-brand-green text-white text-[10px] md:text-xs py-2 px-6 flex justify-between items-center tracking-widest uppercase border-b border-white/10 relative z-[110] transition-transform duration-500 whitespace-nowrap overflow-hidden">
-		<div class="flex gap-6 md:gap-10 items-center">
+	<div id="top-bar" class="bg-brand-green text-white text-[10px] md:text-xs py-1.5 md:py-2 px-3 md:px-6 flex justify-between items-center tracking-widest uppercase border-b border-white/10 relative z-[110] transition-transform duration-500 whitespace-nowrap overflow-hidden">
+		<div class="flex gap-2 md:gap-6 lg:gap-10 items-center relative min-w-0 flex-1">
 			
 			<!-- Old Course Reveal -->
-			<div class="group flex items-center cursor-default shrink-0">
-				<div class="flex items-center gap-2">
-					<span class={`w-2 h-2 rounded-full ${statusData.old.color} animate-pulse`}></span> 
-					<span class="font-bold">{statusData.old.label}: <span class="text-brand-gold">{statusData.old.status}</span></span>
+			<div class="course-group-old relative flex items-center cursor-default shrink-0">
+				<div class={`flex items-center gap-1.5 md:gap-2 ${statusData.old.status !== 'Open' ? 'status-alert' : ''}`}>
+					<span class={`w-1.5 md:w-2 h-1.5 md:h-2 rounded-full ${statusData.old.color} animate-pulse shrink-0`}></span> 
+					<!-- Mobile: solo nombre. Desktop: nombre + estado -->
+					<span class="font-bold">{statusData.old.label}<span class="hidden md:inline">: <span class="text-brand-gold">{statusData.old.status}</span></span></span>
 				</div>
-				<!-- Expandible -->
-				<div class="max-w-0 group-hover:max-w-xs transition-all duration-500 ease-in-out overflow-hidden opacity-0 group-hover:opacity-100">
-					<span class="pl-4 text-[9px] text-white/60 normal-case tracking-tight font-light border-l border-white/10 ml-3 inline-block">
+				<!-- Expandible - En flujo normal para empujar al New Course (solo desktop) -->
+				<div class="max-w-0 transition-all duration-500 ease-in-out overflow-hidden opacity-0 ml-3 whitespace-nowrap inline-block hidden md:block">
+					<span class="pl-4 text-[9px] text-white/60 normal-case tracking-tight font-light border-l border-white/10 inline-block">
 						{statusData.old.details}
 					</span>
 				</div>
 			</div>
 
 			<!-- New Course Reveal -->
-			<div class="group flex items-center cursor-default shrink-0 border-l border-white/10 pl-6 md:pl-10">
-				<div class="flex items-center gap-2">
-					<span class={`w-2 h-2 rounded-full ${statusData.new.color}`}></span> 
-					<span class="font-bold">{statusData.new.label}: <span class="text-brand-gold">{statusData.new.status}</span></span>
+			<div class="course-group-new relative flex items-center cursor-default shrink-0 border-l border-white/10 pl-2 md:pl-6 md:pl-10">
+				<div class={`flex items-center gap-1.5 md:gap-2 ${statusData.new.status !== 'Open' ? 'status-alert' : ''}`}>
+					<span class={`w-1.5 md:w-2 h-1.5 md:h-2 rounded-full ${statusData.new.color} shrink-0`}></span> 
+					<!-- Mobile: solo nombre. Desktop: nombre + estado -->
+					<span class="font-bold">{statusData.new.label}<span class="hidden md:inline">: <span class="text-brand-gold">{statusData.new.status}</span></span></span>
 				</div>
-				<!-- Expandible -->
-				<div class="max-w-0 group-hover:max-w-xs transition-all duration-500 ease-in-out overflow-hidden opacity-0 group-hover:opacity-100">
-					<span class="pl-4 text-[9px] text-white/60 normal-case tracking-tight font-light border-l border-white/10 ml-3 inline-block">
+				<!-- Expandible - En absoluto para no empujar los botones (solo desktop) -->
+				<div class="absolute left-full top-0 max-w-0 transition-all duration-500 ease-in-out overflow-hidden opacity-0 ml-3 whitespace-nowrap z-10 hidden md:block">
+					<span class="pl-4 text-[9px] text-white/60 normal-case tracking-tight font-light border-l border-white/10 inline-block">
 						{statusData.new.details}
 					</span>
 				</div>
 			</div>
 
 		</div>
-		<div class="hidden lg:block opacity-40 font-serif italic text-sm normal-case tracking-normal">
-			berkshire heritage golf
+		<div class="flex items-center gap-2 md:gap-4 lg:gap-6 shrink-0">
+			<span class="hidden lg:inline opacity-40 font-serif italic text-sm normal-case tracking-normal">
+				Berkshire Heritage Golf: Making Quality Golf Accessible to Everyone
+			</span>
+			<WeatherWidget client:load />
 		</div>
 	</div>
 
@@ -91,11 +114,11 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 			
 			<!-- 2. NAVIGATION (Sticky & Transformable) -->
 			<nav id="main-nav" class="fixed top-0 w-full z-[100] px-4 md:px-6 transition-all duration-500 py-10 md:py-12 translate-y-8">
-				<div class="max-w-7xl mx-auto flex justify-between items-center">
+				<div class="nav-inner max-w-7xl mx-auto grid grid-cols-3 items-center relative">
 					
 					<!-- A. LOGO & STATUS CONTAINER -->
-					<div class="flex items-center gap-4 md:gap-8">
-						<a href="/" class="block nav-logo transition-all duration-500 origin-left">
+					<div class="flex items-center gap-4 md:gap-8 shrink-0">
+						<a href="/" class="block nav-logo transition-all duration-500 origin-left shrink-0">
 							<img 
 								src={logoUrl} 
 								alt="Billingbear Park Golf Course" 
@@ -103,51 +126,46 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 							/>
 						</a>
 
-						<!-- Mini Status (Sticky Mode Only) -->
-						<div class="nav-status hidden opacity-0 transition-all duration-500 items-center gap-6 border-l border-white/20 pl-6 h-8 whitespace-nowrap">
-							<div class="group flex items-center">
+						<!-- Mini Status (Sticky Mode Only - Desktop) -->
+						<div class="nav-status hidden opacity-0 transition-all duration-500 items-center gap-6 border-l border-white/20 pl-6 h-8 whitespace-nowrap relative min-w-0">
+							<div class="nav-course-group-old relative flex items-center">
 								<span class={`w-2 h-2 rounded-full ${statusData.old.color} shrink-0`}></span> 
-								<div class="flex flex-col ml-3 leading-tight">
+								<div class={`flex flex-col ml-3 leading-tight ${statusData.old.status !== 'Open' ? 'status-alert' : ''}`}>
 									<span class="text-white text-[8px] font-bold uppercase tracking-widest">{statusData.old.label}</span>
 									<span class="text-brand-gold text-[9px] font-bold uppercase">{statusData.old.status}</span>
 								</div>
-								<!-- Mini Reveal en Sticky -->
-								<div class="max-w-0 group-hover:max-w-xs transition-all duration-500 overflow-hidden opacity-0 group-hover:opacity-100 hidden md:block">
-									<span class="text-[9px] text-white/40 ml-4 border-l border-white/10 pl-4">{statusData.old.details}</span>
+								<div class="max-w-0 transition-all duration-500 overflow-hidden opacity-0 hidden md:block ml-4 whitespace-nowrap inline-block">
+									<span class="text-[9px] text-white/40 border-l border-white/10 pl-4">{statusData.old.details}</span>
 								</div>
 							</div>
 
-							<div class="group flex items-center border-l border-white/10 pl-6">
+							<div class="nav-course-group-new relative flex items-center border-l border-white/10 pl-6">
 								<span class={`w-2 h-2 rounded-full ${statusData.new.color} shrink-0`}></span> 
-								<div class="flex flex-col ml-3 leading-tight">
+								<div class={`flex flex-col ml-3 leading-tight ${statusData.new.status !== 'Open' ? 'status-alert' : ''}`}>
 									<span class="text-white text-[8px] font-bold uppercase tracking-widest">{statusData.new.label}</span>
 									<span class="text-brand-gold text-[9px] font-bold uppercase">{statusData.new.status}</span>
 								</div>
-								<!-- Mini Reveal en Sticky -->
-								<div class="max-w-0 group-hover:max-w-xs transition-all duration-500 overflow-hidden opacity-0 group-hover:opacity-100 hidden md:block">
-									<span class="text-[9px] text-white/40 ml-4 border-l border-white/10 pl-4">{statusData.new.details}</span>
+								<div class="absolute left-full top-0 max-w-0 transition-all duration-500 overflow-hidden opacity-0 hidden md:block ml-4 whitespace-nowrap z-10">
+									<span class="text-[9px] text-white/40 border-l border-white/10 pl-4">{statusData.new.details}</span>
 								</div>
 							</div>
 						</div>
 					</div>
 					
 					<!-- B. MENU LINKS -->
-					<div class="nav-links hidden md:flex gap-6 lg:gap-8 text-white text-sm font-medium tracking-wide shadow-black drop-shadow-md transition-all duration-500">
-						<a href="#courses" class="hover:text-brand-gold transition-colors duration-300">Our Courses</a>
-						<a href="#heritage" class="hover:text-brand-gold transition-colors duration-300">History</a>
-						<a href="#vouchers" class="hover:text-brand-gold transition-colors duration-300">Gift Vouchers</a>
-						<a href="#social" class="hover:text-brand-gold transition-colors duration-300">Shuffleboard</a>
-						<a href="#events" class="hover:text-brand-gold transition-colors duration-300">Events</a>
+					<div class="nav-links hidden md:flex gap-6 lg:gap-8 text-white text-sm font-medium tracking-wide shadow-black drop-shadow-md transition-all duration-500 justify-center">
+						<a href="#courses" class="hover:text-brand-gold transition-colors duration-300 whitespace-nowrap">Our Courses</a>
+						<a href="#heritage" class="hover:text-brand-gold transition-colors duration-300 whitespace-nowrap">History</a>
+						<a href="#vouchers" class="hover:text-brand-gold transition-colors duration-300 whitespace-nowrap">Gift Vouchers</a>
+						<a href="#social" class="hover:text-brand-gold transition-colors duration-300 whitespace-nowrap">Shuffleboard</a>
+						<a href="#events" class="hover:text-brand-gold transition-colors duration-300 whitespace-nowrap">Events</a>
 					</div>
 
 					<!-- C. ACTION BUTTONS -->
-					<div class="flex items-center gap-2 md:gap-3">
-						<!-- Shuffleboard Button (Sticky Mode Only) -->
+					<div class="flex items-center gap-2 md:gap-3 shrink-0 justify-end">
 						<button class="shuffle-trigger nav-shuffle hidden opacity-0 transform translate-x-4 transition-all duration-500 bg-transparent border border-white/40 text-white px-5 md:px-7 py-2.5 md:py-3 rounded-sm text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-brand-green cursor-pointer whitespace-nowrap leading-none">
 							Shuffleboard
 						</button>
-
-						<!-- Book Tee Time (Always Visible) -->
 						<button class="booking-trigger bg-white text-brand-green px-5 md:px-7 py-2.5 md:py-3 rounded-sm text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-brand-gold transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transform cursor-pointer border border-white whitespace-nowrap leading-none">
 							Book Tee Time
 						</button>
@@ -165,10 +183,10 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 			<div class="absolute inset-0 bg-black/30"></div>
 			
 			<div class="relative z-10 max-w-5xl mx-auto px-6 text-center mt-20">
-				<h1 class="text-4xl md:text-7xl text-white font-serif font-medium leading-[1.1] mb-6 drop-shadow-xl opacity-0 translate-y-8 animate-enter" style="animation-delay: 100ms;">
-					Welcome to <span class="text-brand-gold italic">Billingbear Park</span>
+				<h1 class="hero-title text-4xl md:text-7xl text-white font-serif font-medium leading-[1.1] mb-6 drop-shadow-xl opacity-0 translate-y-8 animate-enter tracking-[0.04em] md:tracking-[0.06em]" style="animation-delay: 100ms;">
+					Welcome to <span class="text-brand-gold italic tracking-[0.08em]">Billingbear Park</span>
 				</h1>
-				<p class="text-white text-base md:text-2xl font-light max-w-3xl mx-auto leading-relaxed drop-shadow-lg opacity-0 translate-y-8 animate-enter" style="animation-delay: 300ms;">
+				<p class="hero-subtitle text-white text-base md:text-2xl font-light max-w-3xl mx-auto leading-relaxed drop-shadow-lg opacity-0 translate-y-8 animate-enter tracking-[0.02em]" style="animation-delay: 300ms;">
 					Pay and play golf in the heart of the beautiful Berkshire countryside.
 				</p>
 				
@@ -176,7 +194,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 					<button class="booking-trigger bg-brand-gold text-brand-green px-10 py-4 text-sm font-bold uppercase tracking-widest hover:bg-white transition-all duration-300 shadow-xl border border-brand-gold hover:shadow-2xl hover:-translate-y-1 cursor-pointer whitespace-nowrap">
 						Book a Tee Time
 					</button>
-					<a href="#notice-board" class="bg-black/30 backdrop-blur-md border border-white/30 text-white px-10 py-4 text-sm font-bold uppercase tracking-widest hover:bg-white hover:text-brand-green transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+					<a href="#notice-board" class="bg-brand-gold/80 backdrop-blur-md border border-white/30 text-white px-10 py-4 text-sm font-bold uppercase tracking-widest hover:bg-white hover:text-brand-green transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
 						Player Info
 					</a>
 				</div>
@@ -184,7 +202,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 		</header>
 
 		<!-- 4. THE CLUBHOUSE BOARD -->
-		<section id="notice-board" class="relative -mt-24 z-20 px-4 md:px-6 pb-24 reveal">
+		<section id="notice-board" class="relative -mt-24 z-20 px-4 md:px-6 pb-24 reveal scroll-mt-24">
 			<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
 				<!-- A. COLUMNA IZQUIERDA -->
 				<div class="lg:col-span-2 bg-brand-cream border-t-4 border-brand-green shadow-2xl p-6 md:p-12 rounded-sm transform transition-all hover:shadow-3xl duration-500">
@@ -251,7 +269,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 		</section>
 
 		<!-- 5. OUR COURSES -->
-		<section id="courses" class="py-24 px-6 bg-white reveal">
+		<section id="courses" class="py-24 px-6 bg-white reveal scroll-mt-20">
 			<div class="max-w-7xl mx-auto">
 				<div class="text-center mb-16">
 					<h2 class="font-serif text-4xl md:text-5xl text-brand-green mb-6 leading-tight italic">Our Courses</h2>
@@ -259,7 +277,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 				</div>
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
 					<!-- Old Course -->
-					<div class="group cursor-pointer">
+					<a href="/courses/the-old-course" class="group block cursor-pointer">
 						<div class="overflow-hidden mb-6 aspect-[16/10] relative shadow-lg rounded-sm">
 							<img src="https://images.pexels.com/photos/1325681/pexels-photo-1325681.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="The Old Course" class="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-105" />
 							<div class="absolute bottom-6 left-6 bg-brand-green text-white px-5 py-2 text-xs font-bold tracking-widest shadow-md">18 HOLES</div>
@@ -268,11 +286,11 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 						<p class="text-brand-dark/70 font-light leading-relaxed mb-6 text-base md:text-lg">
 							Designed by Martin Hawtree. A true test of strategy winding through mature parkland and ancient woodland.
 						</p>
-						<a href="/courses/the-old-course" class="inline-flex items-center text-brand-green font-bold uppercase tracking-widest text-[10px] border-b-2 border-brand-gold pb-1 hover:text-brand-gold transition-all duration-300 leading-none">Explore the Course &rarr;</a>
-					</div>
+						<span class="inline-flex items-center text-brand-green font-bold uppercase tracking-widest text-[10px] border-b-2 border-brand-gold pb-1 group-hover:text-brand-gold transition-all duration-300 leading-none">Explore the Course &rarr;</span>
+					</a>
 
 					<!-- New Course -->
-					<div class="group cursor-pointer">
+					<a href="/courses/the-new-course" class="group block cursor-pointer">
 						<div class="overflow-hidden mb-6 aspect-[16/10] relative shadow-lg rounded-sm">
 							<img src="https://images.pexels.com/photos/274133/pexels-photo-274133.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="The New Course" class="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-105" />
 							<div class="absolute bottom-6 left-6 bg-brand-green text-white px-5 py-2 text-xs font-bold tracking-widest shadow-md">9 HOLES PAR 3</div>
@@ -281,14 +299,14 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 						<p class="text-brand-dark/70 font-light leading-relaxed mb-6 text-base md:text-lg">
 							A beautifully maintained par 3 course with water hazards. Perfect for beginners or sharpening your short game.
 						</p>
-						<a href="/courses/the-new-course" class="inline-flex items-center text-brand-green font-bold uppercase tracking-widest text-[10px] border-b-2 border-brand-gold pb-1 hover:text-brand-gold transition-all duration-300 leading-none">Explore the Course &rarr;</a>
-					</div>
+						<span class="inline-flex items-center text-brand-green font-bold uppercase tracking-widest text-[10px] border-b-2 border-brand-gold pb-1 group-hover:text-brand-gold transition-all duration-300 leading-none">Explore the Course &rarr;</span>
+					</a>
 				</div>
 			</div>
 		</section>
 
 		<!-- 6. HERITAGE & HISTORY -->
-		<section id="heritage" class="py-24 px-6 bg-brand-cream border-t border-brand-stone reveal">
+		<section id="heritage" class="py-24 px-6 bg-brand-cream border-t border-brand-stone reveal scroll-mt-20">
 			<div class="max-w-7xl mx-auto">
 				<div class="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-center">
 					<div class="order-2 lg:order-1 relative">
@@ -327,54 +345,85 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 		</section>
 
 		<!-- 7. BENTO VOUCHERS SECTION (INTEGRADO CON WOO) -->
-		<section id="vouchers" class="py-24 px-6 bg-brand-cream border-t border-brand-stone reveal">
-            <div class="max-w-7xl mx-auto">
-                <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
-                    <div class="max-w-2xl">
+		<section id="vouchers" class="py-24 px-6 bg-white border-t border-brand-stone reveal scroll-mt-20">
+			<div class="max-w-7xl mx-auto">
+				<div class="flex flex-col md:flex-row justify-between items-baseline mb-12 gap-4">
+					<div class="max-w-2xl">
                         <span class="text-brand-gold uppercase tracking-widest text-[10px] font-bold">Gift Shop</span>
                         <h3 class="font-serif text-3xl md:text-5xl text-brand-green mt-2 leading-tight italic">Popular Experiences</h3>
                         <p class="text-brand-dark/60 mt-4 font-light leading-relaxed">Choose from our most requested gift vouchers. Perfect for birthdays, anniversaries, or a special thank you.</p>
                     </div>
-                    <a href="/vouchers" class="bg-brand-green text-white px-8 py-3 text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-brand-gold transition-all leading-none shadow-xl">
-                        View All Vouchers &rarr;
-                    </a>
-                </div>
+					<a href="/vouchers" class="bg-brand-green text-white px-8 py-3 text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-brand-gold transition-all leading-none shadow-xl">View all vouchers &rarr;</a>
+				</div>
 
-                <!-- Bento Grid Optimizado para 4 items -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-[350px]">
-                    {homeVouchers.map((voucher: any, index: number) => {
-                        const isFeatured = voucher.acf?.is_featured;
-                        const price = voucher.acf?.price;
+				<!-- Bento Grid de Vouchers -->
+				<div class="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-[350px]">
+					{homeVouchers.map((voucher: any, index: number) => {
+						const isFeatured = voucher.acf?.is_featured;
+						const price = voucher.acf?.price;
+						const wooId = voucher.acf?.woo_product_id;
+						const isOutOfStock = !wooId;
                         // Bento logic: El primero siempre es grande, los demás pequeños para equilibrio
                         const cardSpan = index === 0 ? 'md:col-span-2 md:row-span-2' : 'md:col-span-1 md:row-span-1';
-                        
-                        return (
-                            <div class={`group relative overflow-hidden rounded-sm shadow-sm hover:shadow-2xl transition-all duration-700 ${cardSpan} bg-white border border-brand-stone`}>
-                                <img src={getImageUrl(voucher)} class="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110 opacity-90 group-hover:opacity-100" />
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                                <div class="absolute inset-0 p-6 flex flex-col justify-end z-10 text-white">
-                                    <h4 class={`font-serif italic mb-2 leading-tight ${index === 0 ? 'text-3xl md:text-4xl' : 'text-xl md:text-2xl'}`} set:html={voucher.title.rendered}></h4>
-                                    <div class="flex items-center justify-between mt-4">
-                                        <span class="text-brand-gold text-2xl font-serif italic leading-none">{price}</span>
-                                        <a href={`/vouchers#${voucher.id}`} class="bg-white text-brand-green px-4 py-2 text-[9px] uppercase tracking-widest font-bold hover:bg-brand-gold hover:text-white transition-all leading-none shadow-lg">Purchase &rarr;</a>
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-            </div>
-        </section>
+                        // Si hay ID de WooCommerce, link directo al checkout, si no al link manual.
+						const cta = voucher.acf?.cta_link || (wooId ? `https://billingbearpark.com/checkout/?add-to-cart=${wooId}` : '#');
+						
+						return (
+							<div class={`group relative overflow-hidden rounded-sm shadow-sm hover:shadow-2xl transition-all duration-700 
+                                ${cardSpan} ${!isFeatured && index % 3 === 0 ? 'bg-brand-green' : 'bg-brand-cream border border-brand-stone'}
+								${isOutOfStock ? 'cursor-default' : ''}`}>
+								
+								<img src={getImageUrl(voucher)} class={`absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] ease-out ${isOutOfStock ? 'grayscale' : 'group-hover:scale-110'}`} alt={voucher.title.rendered} />
+								<div class={`absolute inset-0 ${index === 0 ? 'bg-brand-green/40 group-hover:bg-brand-green/60' : 'bg-black/20 group-hover:bg-black/40'} transition-colors duration-500 ${isOutOfStock ? 'opacity-60' : ''}`}></div>
+								
+								{/* Badge "Currently Unavailable" superpuesto */}
+								{isOutOfStock && (
+									<div class="absolute top-4 left-4 z-20 bg-brand-dark/90 text-white px-4 py-2 text-[9px] font-bold uppercase tracking-widest leading-none shadow-lg">
+										Currently Unavailable
+									</div>
+								)}
+								
+								<div class="absolute inset-0 p-6 md:p-10 flex flex-col justify-between z-10">
+									<div class="flex justify-between items-start">
+										{index === 0 && !isOutOfStock && (
+											<span class="bg-white text-brand-green text-[9px] font-bold px-3 py-1 uppercase tracking-widest w-fit transform -translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 leading-none">Best Seller</span>
+										)}
+									</div>
+									<div class={`text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500 ${isOutOfStock ? 'opacity-75' : ''}`}>
+										<h4 class={`font-serif italic mb-2 leading-tight ${index === 0 ? 'text-3xl md:text-5xl' : 'text-2xl'}`} set:html={voucher.title.rendered}></h4>
+										<div class="text-xs md:text-sm opacity-90 mb-6 font-light line-clamp-2 max-w-sm" set:html={voucher.content.rendered}></div>
+										<div class={`flex items-stretch ${index === 0 ? 'gap-6' : 'gap-3'}`}>
+											<span class={`bg-black/70 backdrop-blur-sm text-white font-bold rounded-sm shadow-lg border border-white/20 flex items-center ${index === 0 ? 'text-xl px-4 py-2.5' : 'text-base px-3 py-2'}`}>{price}</span>
+											{wooId ? (
+												<PurchaseButton 
+													client:load
+													productId={wooId.toString()}
+													productName={voucher.title.rendered.replace(/<[^>]*>/g, '')}
+													price={price || 'N/A'}
+													className={`!bg-white !text-brand-green hover:!bg-brand-gold hover:!text-white shadow-lg whitespace-nowrap !flex !items-center !justify-center ${index === 0 ? '!px-4 !py-2.5 !text-[10px] !h-[50px]' : '!px-3 !text-[9px] !h-[40px]'}`}
+												/>
+											) : (
+												<span class={`bg-white/50 text-brand-green/50 uppercase tracking-widest font-bold leading-none shadow-lg cursor-not-allowed whitespace-nowrap flex items-center ${index === 0 ? 'px-4 py-2.5 text-[10px] h-[50px]' : 'px-3 text-[9px] h-[40px]'}`}>Currently Unavailable</span>
+											)}
+										</div>
+									</div>
+								</div>
+							</div>
+						);
+					})}
+				</div>
+			</div>
+		</section>
 
 		<!-- 8. THE CLUBHOUSE & SOCIAL -->
-		<section id="social" class="py-24 px-6 bg-brand-green text-brand-cream relative overflow-hidden reveal">
+		<section id="social" class="py-24 px-6 bg-brand-green text-brand-cream relative overflow-hidden reveal scroll-mt-20">
 			<div class="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] animate-pulse"></div>
 			
 			<div class="max-w-7xl mx-auto relative z-10">
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
 					<div>
 						<span class="text-brand-gold uppercase tracking-widest text-[10px] font-bold">Aprés Golf</span>
-						<h2 class="font-serif text-4xl md:text-5xl mb-6 mt-2 italic leading-tight italic">The Clubhouse</h2>
+						<h2 class="font-serif text-4xl md:text-5xl mb-6 mt-2 italic leading-tight">The Clubhouse</h2>
 						<p class="text-white/80 text-base md:text-lg font-light leading-relaxed mb-8">
 							Looking for more than golf? Gather in the clubhouse for great food, a relaxed atmosphere, and a game of Shuffleboard. Perfect for families, groups, or settling a score after 18 holes.
 						</p>
@@ -412,11 +461,11 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 		</section>
 
 		<!-- 9. EVENTS & PRIVATE HIRE -->
-		<section id="events" class="py-24 px-6 bg-brand-cream border-t border-brand-stone reveal">
+		<section id="events" class="py-24 px-6 bg-brand-cream border-t border-brand-stone reveal scroll-mt-20">
 			<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-center">
 				<div class="order-2 lg:order-1">
 					<span class="text-brand-gold uppercase tracking-widest text-[10px] font-bold">Venue Hire</span>
-					<h2 class="font-serif text-3xl md:text-5xl text-brand-green mt-2 mb-6 leading-tight italic italic italic">Celebrate at Billingbear</h2>
+					<h2 class="font-serif text-3xl md:text-5xl text-brand-green mt-2 mb-6 leading-tight italic">Celebrate at Billingbear</h2>
 					<p class="text-brand-dark/70 text-base md:text-lg font-light leading-relaxed mb-6">
 						Billingbear Park is a fantastic venue for private functions. With no neighbours, you’re able to turn up the music and enjoy an evening with friends and family in beautiful private surroundings.
 					</p>
@@ -434,7 +483,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 
 					<div class="bg-white border-l-4 border-brand-green p-6 shadow-sm mb-8 hover:shadow-lg transition-shadow duration-300">
 						<h4 class="font-serif text-lg md:text-xl text-brand-green mb-2 italic">Golf-Themed Buffets & BBQs</h4>
-						<p class="text-xs md:text-sm text-brand-dark/70 mb-3 italic">Nuestras opciones de catering incluyen menús temáticos:</p>
+						<p class="text-xs md:text-sm text-brand-dark/70 mb-3 italic">Our catering options include themed menus:</p>
 						<div class="flex flex-wrap gap-2">
 							<span class="bg-brand-stone/50 px-3 py-1 text-[9px] uppercase tracking-tighter rounded-full font-bold hover:bg-brand-green hover:text-white transition-colors cursor-default leading-none">The Palmer</span>
 							<span class="bg-brand-stone/50 px-3 py-1 text-[9px] uppercase tracking-tighter rounded-full font-bold hover:bg-brand-green hover:text-white transition-colors cursor-default leading-none">The Nicklaus</span>
@@ -481,9 +530,10 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 						<h5 class="text-brand-gold uppercase tracking-widest text-[9px] font-bold mb-6 opacity-60">Navigate</h5>
 						<ul class="space-y-3 text-xs text-white/60 font-light">
 							<li><button class="booking-trigger hover:text-brand-gold transition-colors duration-300 text-left cursor-pointer leading-none">Book Tee Time</button></li>
-							<li><a href="#vouchers" class="hover:text-brand-gold transition-colors duration-300">Gift Vouchers</a></li>
+							<li><a href="/vouchers" class="hover:text-brand-gold transition-colors duration-300">Gift Vouchers</a></li>
 							<li><button class="shuffle-trigger hover:text-brand-gold transition-colors duration-300 text-left cursor-pointer leading-none">Shuffleboard</button></li>
-							<li><a href="#events" class="hover:text-brand-gold transition-colors duration-300">Events & Weddings</a></li>
+							<li><a href="/events" class="hover:text-brand-gold transition-colors duration-300">Events & Weddings</a></li>
+							<li><a href="/history" class="hover:text-brand-gold transition-colors duration-300">History</a></li>
 						</ul>
 					</div>
 					<div class="space-y-4">
@@ -493,6 +543,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 							<li class="not-italic">Berkshire, RG40 5SJ</li>
 							<li class="not-italic text-white pt-4 text-base md:text-lg font-serif hover:text-brand-gold transition-colors duration-300 cursor-pointer">+44 (0) 1344 860 860</li>
 							<li class="not-italic opacity-50 hover:opacity-100 transition-opacity duration-300 cursor-pointer text-[10px]">info@billingbearpark.com</li>
+							<li class="not-italic pt-2"><a href="/contact" class="hover:text-brand-gold transition-colors duration-300 not-italic">Contact Us</a></li>
 						</ul>
 					</div>
 				</div>
@@ -512,7 +563,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 			</button>
 			<div class="text-center pt-10 pb-6 px-6">
 				<span class="text-brand-gold uppercase tracking-widest text-[10px] font-bold leading-none">Book Online</span>
-				<h2 class="font-serif text-2xl md:text-4xl text-brand-green mt-2 leading-tight italic italic">Select Your Course</h2>
+				<h2 class="font-serif text-2xl md:text-4xl text-brand-green mt-2 leading-tight italic">Select Your Course</h2>
 			</div>
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-1 p-1 md:p-6 md:gap-6 bg-brand-stone/30">
 				<a href={brsOldCourse} target="_blank" rel="noopener noreferrer" class="group relative aspect-video md:aspect-[4/3] overflow-hidden rounded-sm cursor-pointer block">
@@ -542,15 +593,18 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 
 	<!-- MODAL: SHUFFLEBOARD -->
 	<div id="shuffleboard-modal" class="modal-container fixed inset-0 z-[130] hidden items-center justify-center bg-black/90 backdrop-blur-md p-2 md:p-4 transition-all duration-300 overflow-y-auto">
-		<div class="modal-content relative w-full max-w-5xl bg-white rounded-sm shadow-2xl overflow-hidden h-[95vh] md:h-[85vh]">
-			<button class="close-modal absolute top-3 right-3 z-10 p-2 text-brand-green hover:text-brand-gold transition-colors bg-white/80 rounded-full shadow-md">
+		<div class="modal-content relative w-full max-w-5xl bg-white rounded-sm shadow-2xl overflow-hidden h-[95vh] md:h-[85vh] shuffleboard-modal-wrapper">
+			<button class="close-modal absolute top-3 right-3 z-20 p-2 text-brand-green hover:text-brand-gold transition-colors bg-white/90 rounded-full shadow-md">
 				<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
 			</button>
-			<iframe 
-				src={shuffleBookingUrl} 
-				class="w-full h-full border-none"
-				title="Shuffleboard Booking"
-			></iframe>
+			<div class="shuffleboard-iframe-container">
+				<iframe 
+					src={shuffleBookingUrl} 
+					class="w-full h-full border-none shuffleboard-iframe"
+					title="Shuffleboard Booking"
+					allow="payment"
+				></iframe>
+			</div>
 		</div>
 	</div>
 
@@ -565,6 +619,24 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 		const navShuffle = document.querySelector('.nav-shuffle');
 
 		const handleScroll = () => {
+			// En mobile (< 768px): lógica específica, NO modificar desktop
+			if (window.innerWidth < 768) {
+				topBar?.classList.remove('-translate-y-full');
+				nav?.classList.remove('bg-brand-green', 'shadow-2xl', 'py-3', 'translate-y-0', 'translate-y-8', 'py-10', 'md:py-12');
+				nav?.classList.add('nav-mobile');
+				navLogo?.classList.remove('scale-75');
+				navLinks?.classList.remove('opacity-0', 'pointer-events-none', 'hidden');
+				navStatus?.classList.add('hidden', 'opacity-0');
+				navStatus?.classList.remove('flex', 'opacity-100');
+				navShuffle?.classList.add('hidden', 'opacity-0', 'translate-x-4');
+				navShuffle?.classList.remove('inline-block', 'opacity-100', 'translate-x-0');
+				nav?.classList.toggle('nav-mobile-scrolled', window.scrollY > 30);
+				return;
+			}
+
+			// DESKTOP: comportamiento original (sticky, top bar se oculta al scroll)
+			nav?.classList.remove('nav-mobile', 'nav-mobile-scrolled');
+
 			if (window.scrollY > 40) {
 				topBar?.classList.add('-translate-y-full');
 				nav?.classList.add('bg-brand-green', 'shadow-2xl', 'py-3', 'translate-y-0');
@@ -582,7 +654,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 				topBar?.classList.remove('-translate-y-full');
 				nav?.classList.remove('bg-brand-green', 'shadow-2xl', 'py-3', 'translate-y-0');
 				nav?.classList.add('py-10', 'md:py-12', 'translate-y-8');
-
+				
 				navLogo?.classList.remove('scale-75');
 				navLinks?.classList.remove('opacity-0', 'pointer-events-none', 'hidden');
 				
@@ -594,6 +666,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 			}
 		};
 		window.addEventListener('scroll', handleScroll);
+		window.addEventListener('resize', handleScroll);
 
 		// --- MODAL SYSTEM ---
 		function initModal(modalId, triggerClass) {
@@ -641,6 +714,7 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 
 		// --- SCROLL REVEAL ---
 		document.addEventListener('DOMContentLoaded', () => {
+			handleScroll();
 			const observer = new IntersectionObserver((entries) => {
 				entries.forEach(entry => {
 					if (entry.isIntersecting) entry.target.classList.add('active');
@@ -651,14 +725,14 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 	</script>
 
 	<style>
-		/* Animación de entrada general */
+		/* Animación de entrada general (mejorada) */
 		@keyframes fadeInUp {
-			from { opacity: 0; transform: translateY(30px); }
-			to { opacity: 1; transform: translateY(0); }
+			from { opacity: 0; transform: translateY(30px) scale(0.98); }
+			to { opacity: 1; transform: translateY(0) scale(1); }
 		}
 
 		.animate-enter {
-			animation: fadeInUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+			animation: fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 		}
 
 		/* Revelación al scroll */
@@ -710,6 +784,167 @@ const shuffleBookingUrl = "https://billingbearpark.simplybook.it/v2/?widget-type
 		/* Ajustes Tipográficos para Golf Heritage */
 		h1, h2, h3, h4 {
 			text-wrap: balance;
+		}
+
+		/* Hover específico para cada curso - Top Bar */
+		.course-group-old:hover > div:last-child {
+			max-width: 20rem;
+			opacity: 1;
+		}
+
+		.course-group-new:hover > div:last-child {
+			max-width: 20rem;
+			opacity: 1;
+		}
+
+		/* Hover específico para cada curso - Nav Status */
+		.nav-course-group-old:hover > div:last-child {
+			max-width: 20rem;
+			opacity: 1;
+		}
+
+		.nav-course-group-new:hover > div:last-child {
+			max-width: 20rem;
+			opacity: 1;
+		}
+
+		/* Animación de latido con brillo tipo neon para status no "Open" */
+		/* Empieza sin efecto, hace el latido en los primeros 18% del ciclo (~0.9s), luego reposo hasta el siguiente ciclo (5s total) */
+		@keyframes neonPulse {
+			0%, 18% {
+				text-shadow: none;
+				opacity: 1;
+			}
+			3% {
+				text-shadow: 0 0 3px rgba(255, 215, 0, 0.3),
+							 0 0 6px rgba(255, 215, 0, 0.2);
+			}
+			6% {
+				text-shadow: 0 0 5px rgba(255, 215, 0, 0.5),
+							 0 0 10px rgba(255, 215, 0, 0.4);
+			}
+			9% {
+				text-shadow: 0 0 8px rgba(255, 215, 0, 0.7),
+							 0 0 15px rgba(255, 215, 0, 0.5),
+							 0 0 25px rgba(255, 215, 0, 0.3);
+			}
+			12% {
+				text-shadow: 0 0 10px rgba(255, 215, 0, 0.8),
+							 0 0 20px rgba(255, 215, 0, 0.6),
+							 0 0 30px rgba(255, 215, 0, 0.4),
+							 0 0 40px rgba(255, 215, 0, 0.2);
+				opacity: 1.1;
+			}
+			15% {
+				text-shadow: 0 0 8px rgba(255, 215, 0, 0.7),
+							 0 0 15px rgba(255, 215, 0, 0.5),
+							 0 0 25px rgba(255, 215, 0, 0.3);
+				opacity: 1.05;
+			}
+			18%, 100% {
+				text-shadow: none;
+				opacity: 1;
+			}
+		}
+
+		.status-alert {
+			animation: neonPulse 5s ease-in-out infinite;
+		}
+
+		/* Desktop: grid centrado (ORIGINAL) */
+		.nav-inner {
+			display: grid;
+			grid-template-columns: 1fr auto 1fr;
+			align-items: center;
+		}
+
+		#main-nav .nav-links {
+			justify-self: center;
+		}
+
+		/* ========== SOLO MOBILE (< 768px) ========== */
+		@media (max-width: 767px) {
+			/* Top bar: fixed para que no desaparezca al scroll */
+			#top-bar {
+				position: fixed !important;
+				top: 0 !important;
+				left: 0 !important;
+				right: 0 !important;
+				transform: none !important;
+			}
+
+			/* Nav: pegada al top bar, compacta, flex layout */
+			#main-nav.nav-mobile {
+				top: 0 !important;
+				padding-top: 2.5rem !important;
+				padding-bottom: 0.75rem !important;
+				transform: none !important;
+			}
+			.nav-inner {
+				display: flex !important;
+				justify-content: space-between !important;
+				grid-template-columns: none !important;
+			}
+			#main-nav .nav-status,
+			#main-nav .nav-shuffle,
+			#main-nav .nav-links {
+				display: none !important;
+				opacity: 0 !important;
+			}
+			#main-nav .nav-logo img {
+				transform: none !important;
+			}
+			#main-nav.nav-mobile-scrolled {
+				background-color: rgba(26, 60, 52, 0.97) !important;
+				backdrop-filter: blur(8px);
+				-webkit-backdrop-filter: blur(8px);
+			}
+		}
+
+		/* Estilos para el modal de Shuffleboard */
+		.shuffleboard-modal-wrapper {
+			position: relative;
+		}
+
+		.shuffleboard-iframe-container {
+			position: relative;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+
+		/* Ocultar la barra superior del iframe desplazándolo hacia arriba */
+		.shuffleboard-iframe {
+			position: absolute;
+			top: -70px;
+			left: 0;
+			width: 100%;
+			height: calc(100% + 70px);
+			border: none;
+		}
+
+		/* Overlay verde para cubrir la barra superior si es visible */
+		.shuffleboard-iframe-container::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			height: 70px;
+			background: #2d5016;
+			z-index: 10;
+			pointer-events: none;
+		}
+
+		/* Ajustes para móviles */
+		@media (max-width: 768px) {
+			.shuffleboard-iframe {
+				top: -60px;
+				height: calc(100% + 60px);
+			}
+			.shuffleboard-iframe-container::before {
+				height: 60px;
+			}
 		}
 	</style>
 </Layout>
