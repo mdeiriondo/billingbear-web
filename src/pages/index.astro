@@ -1169,8 +1169,10 @@ const shuffleBookingUrl =
         >
       </button>
       <div class="shuffleboard-iframe-container">
+        <!-- src se asigna al abrir el modal (lazy load) para no penalizar LCP/CLS -->
         <iframe
-          src={shuffleBookingUrl}
+          src="about:blank"
+          data-src={shuffleBookingUrl}
           class="w-full h-full border-none shuffleboard-iframe"
           title="Shuffleboard Booking"
           allow="payment"></iframe>

@@ -77,6 +77,13 @@ function initModal(modalId, triggerClass) {
     document.body.style.overflow = 'hidden';
     modalEl.classList.remove('hidden');
     modalEl.classList.add('flex');
+    // Carga diferida del iframe SimplyBook: solo cuando se abre el modal (mejora Core Web Vitals)
+    if (modalId === 'shuffleboard-modal') {
+      const iframe = modalEl.querySelector('.shuffleboard-iframe');
+      if (iframe?.dataset.src && !iframe.src.includes('simplybook')) {
+        iframe.src = iframe.dataset.src;
+      }
+    }
     requestAnimationFrame(() => {
       modalEl.classList.add('modal-visible');
     });
