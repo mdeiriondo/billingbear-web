@@ -26,8 +26,8 @@ En **Settings** → **Environment variables** del proyecto en Cloudflare Pages a
 | `WORDPRESS_URL` | (Opcional) URL de WordPress. Si no se define, se usa `https://billingbearpark.com` | `https://billingbearpark.com` |
 
 - **Alcance:** asígnalas al entorno **Production** (y a **Preview** si pruebas en ramas).
-- **Cuándo se usan:** Astro/Vite reemplaza `import.meta.env` en **tiempo de build**, así que estas variables deben existir cuando Cloudflare ejecuta `npm run build`. Si las añades o cambias después del deploy, hay que **volver a desplegar** (nuevo build) para que se apliquen.
-- Sin `WOOCOMMERCE_CONSUMER_KEY` y `WOOCOMMERCE_CONSUMER_SECRET`, al comprar un voucher verás **"Please check your API credentials"** y un 500 en `/api/create-voucher-order`.
+- **Cuándo se usan:** Este proyecto lee las credenciales de WooCommerce en **runtime** desde `locals.runtime.env` (no en build). Por eso puedes usar **Variables encriptadas / Secrets** en Cloudflare sin problema: están disponibles cuando la función ejecuta. No hace falta redeploy solo por cambiar el valor de un secreto.
+- Sin `WOOCOMMERCE_CONSUMER_KEY` y `WOOCOMMERCE_CONSUMER_SECRET` (o con valores incorrectos), al comprar un voucher verás **"Please check your API credentials"** y un 500 en `/api/create-voucher-order`.
 
 ### 3. Node version (build)
 

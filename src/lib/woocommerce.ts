@@ -3,7 +3,7 @@
  * Maneja la creación de órdenes y obtención de links de checkout
  */
 
-interface WooCommerceConfig {
+export interface WooCommerceConfig {
   url: string;
   consumerKey: string;
   consumerSecret: string;
@@ -57,10 +57,15 @@ function createAuthHeader(consumerKey: string, consumerSecret: string): string {
 }
 
 /**
- * Crea una orden en WooCommerce con los datos del destinatario del voucher
+ * Crea una orden en WooCommerce con los datos del destinatario del voucher.
+ * En Cloudflare Pages las credenciales suelen estar solo en runtime (no en build);
+ * pasa runtimeConfig desde la ruta API (locals.runtime.env) para usarlas.
  */
-export async function createVoucherOrder(params: CreateOrderParams): Promise<{ orderId: number; orderKey: string | null }> {
-  const config = getWooCommerceConfig();
+export async function createVoucherOrder(
+  params: CreateOrderParams,
+  runtimeConfig?: WooCommerceConfig
+): Promise<{ orderId: number; orderKey: string | null }> {
+  const config = runtimeConfig ?? getWooCommerceConfig();
   const apiUrl = `${config.url}/wp-json/wc/v3/orders`;
   
   const orderData = {

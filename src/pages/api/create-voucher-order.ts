@@ -1,10 +1,27 @@
 import type { APIRoute } from 'astro';
-import { createVoucherOrder } from '../../lib/woocommerce';
+import { createVoucherOrder, type WooCommerceConfig } from '../../lib/woocommerce';
 
 // Este endpoint debe ejecutarse en el servidor, no prerenderizarse
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request }) => {
+type LocalsWithRuntime = { runtime?: { env?: Record<string, unknown> } };
+
+/** Obtiene config de WooCommerce desde runtime env (Cloudflare) o import.meta.env (dev). */
+function getWooConfigFromContext(locals: LocalsWithRuntime): WooCommerceConfig | undefined {
+  const env = locals.runtime?.env;
+  if (!env) return undefined;
+  const url = typeof env.WOOCOMMERCE_URL === 'string' ? env.WOOCOMMERCE_URL.trim() : '';
+  const consumerKey = typeof env.WOOCOMMERCE_CONSUMER_KEY === 'string' ? env.WOOCOMMERCE_CONSUMER_KEY.trim() : '';
+  const consumerSecret = typeof env.WOOCOMMERCE_CONSUMER_SECRET === 'string' ? env.WOOCOMMERCE_CONSUMER_SECRET.trim() : '';
+  if (!consumerKey || !consumerSecret) return undefined;
+  let baseUrl = url || 'https://billingbearpark.com';
+  if (baseUrl.startsWith('http://') && baseUrl.includes('billingbearpark.com')) {
+    baseUrl = baseUrl.replace('http://', 'https://');
+  }
+  return { url: baseUrl, consumerKey, consumerSecret };
+}
+
+export const POST: APIRoute = async ({ request, locals }) => {
   try {
     // Intentar parsear el body como JSON directamente
     // Astro maneja automáticamente el Content-Type
@@ -59,13 +76,19 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
+    // Credenciales en runtime (Cloudflare) o desde import.meta.env en dev
+    const runtimeConfig = getWooConfigFromContext(locals);
+
     // Crear la orden en WooCommerce
-    const result = await createVoucherOrder({
-      productId: productIdNum,
-      recipientName: recipientName.trim(),
-      recipientEmail: recipientEmail.trim(),
-      message: message?.trim() || undefined
-    });
+    const result = await createVoucherOrder(
+      {
+        productId: productIdNum,
+        recipientName: recipientName.trim(),
+        recipientEmail: recipientEmail.trim(),
+        message: message?.trim() || undefined
+      },
+      runtimeConfig ?? undefined
+    );
 
     return new Response(
       JSON.stringify({
